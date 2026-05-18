@@ -1,3 +1,5 @@
+.PHONY: all build build-snapshot release test coverage fmt lint clean
+
 all: build
 
 build:
@@ -32,5 +34,3 @@ lint:
 clean:
 	@echo "Cleaning..."
 	@rm -rf verge dist/ coverage.out coverage.html
-
-.PHONY: all build build-snapshot release test coverage fmt lint clean

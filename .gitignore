@@ -56,3 +56,6 @@ coverage.out
 # Environment variables - exclude test env
 .env
 !.env.test
+
+# Local Builds
+verge

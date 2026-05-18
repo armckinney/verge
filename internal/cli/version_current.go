@@ -11,15 +11,30 @@ import (
 )
 
 func versionCurrentCmd() *cobra.Command {
-	var repoDir string
+	var (
+		repoDir   string
+		ecosystem string
+		explain   bool
+	)
 
 	cmd := &cobra.Command{
 		Use:   "current",
 		Short: "Get the current version from git tags",
+		Long: `Fetch the current (highest) version from the configured version source.
+
+Examples:
+  verctl version current
+  verctl version current --ecosystem python
+  verctl version current --explain
+  verctl version current --format json`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cfg, err := config.Load(globalFlags.configPath)
 			if err != nil {
 				return fmt.Errorf("loading config: %w", err)
+			}
+
+			if ecosystem == "" {
+				ecosystem = cfg.Ecosystem
 			}
 
 			provider := providers.NewGitTagsProvider()
@@ -33,22 +48,44 @@ func versionCurrentCmd() *cobra.Command {
 			}
 
 			if len(results) == 0 {
-				return fmt.Errorf("no versions found")
+				return fmt.Errorf("no versions found in git tags (exit code %d)", ExitNotFound)
 			}
 
-			// Sort and get latest
 			comparator := version.NewComparator()
 			sort.Slice(results, func(i, j int) bool {
 				return comparator.Compare(results[i].Version, results[j].Version) > 0
 			})
 
+			if explain {
+				fmt.Println("Candidates from git-tags:")
+				for _, r := range results {
+					if r.Version.IsPrerelease() {
+						fmt.Printf("  %s (prerelease)\n", r.Raw)
+					} else {
+						fmt.Printf("  %s (final)\n", r.Raw)
+					}
+				}
+				fmt.Println()
+			}
+
 			v := results[0].Version
+			rendered := version.NewRenderer(ecosystem).Render(v)
+
 			out := NewOutput(OutputFormat(globalFlags.format))
-			out.PrintValue(cfg.Format.TagPrefix + v.String())
-			return nil
+			data := map[string]interface{}{
+				"version":    results[0].Raw,
+				"normalized": v.String(),
+				"ecosystem":  ecosystem,
+				"source":     "git-tags",
+				"rendered":   rendered,
+			}
+			return out.Print(data)
 		},
 	}
 
 	cmd.Flags().StringVar(&repoDir, "repo-dir", ".", "Repository directory")
+	cmd.Flags().StringVar(&ecosystem, "ecosystem", "", "Target ecosystem for rendering (go, python, containers, terraform, github-actions)")
+	cmd.Flags().BoolVar(&explain, "explain", false, "Show selection reasoning")
 	return cmd
 }
+

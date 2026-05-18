@@ -30,7 +30,7 @@ func TestVersionParse_Integration(t *testing.T) {
 
 func TestVersionBump_Integration(t *testing.T) {
 	bin := buildVerctl(t)
-	cmd := exec.Command(bin, "version", "bump", "minor", "v1.2.3")
+	cmd := exec.Command(bin, "version", "bump", "--from", "v1.2.3", "--kind", "minor")
 	out, err := cmd.CombinedOutput()
 	if err != nil {
 		t.Fatalf("command failed: %v\n%s", err, out)

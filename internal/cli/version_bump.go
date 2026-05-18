@@ -8,17 +8,31 @@ import (
 )
 
 func versionBumpCmd() *cobra.Command {
-	var stageStr string
+	var (
+		fromVersion string
+		kindStr     string
+		stageStr    string
+		ecosystem   string
+	)
 
 	cmd := &cobra.Command{
-		Use:   "bump <kind> <version>",
+		Use:   "bump",
 		Short: "Bump a version",
-		Long: `Bump a version by a given kind.
-Kinds: major, minor, patch, prerelease, final`,
-		Args: cobra.ExactArgs(2),
+		Long: `Compute the next version from a given version and bump kind.
+
+Kinds: major, minor, patch, prerelease, final
+
+Examples:
+  verctl version bump --from 1.2.3 --kind minor
+  verctl version bump --from 1.2.3 --kind prerelease --stage dev
+  verctl version bump --from 1.2.3-rc.1 --kind final`,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			kindStr := args[0]
-			versionStr := args[1]
+			if fromVersion == "" {
+				return fmt.Errorf("--from flag is required")
+			}
+			if kindStr == "" {
+				return fmt.Errorf("--kind flag is required")
+			}
 
 			var kind version.BumpKind
 			switch kindStr {
@@ -33,11 +47,11 @@ Kinds: major, minor, patch, prerelease, final`,
 			case "final":
 				kind = version.BumpFinal
 			default:
-				return fmt.Errorf("unknown bump kind: %q (use major, minor, patch, prerelease, final)", kindStr)
+				return fmt.Errorf("unknown bump kind %q (use: major, minor, patch, prerelease, final)", kindStr)
 			}
 
 			parser := version.NewParser()
-			v, err := parser.Parse(versionStr)
+			v, err := parser.Parse(fromVersion)
 			if err != nil {
 				return fmt.Errorf("parsing version: %w", err)
 			}
@@ -56,12 +70,30 @@ Kinds: major, minor, patch, prerelease, final`,
 				return fmt.Errorf("bumping version: %w", err)
 			}
 
+			if ecosystem == "" {
+				ecosystem = "go"
+			}
+			rendered := version.NewRenderer(ecosystem).Render(bumped)
+
 			out := NewOutput(OutputFormat(globalFlags.format))
-			out.PrintValue(bumped.String())
-			return nil
+			data := map[string]interface{}{
+				"from":      fromVersion,
+				"kind":      kindStr,
+				"to":        bumped.String(),
+				"ecosystem": ecosystem,
+				"rendered":  rendered,
+			}
+			if stageStr != "" {
+				data["stage"] = stageStr
+			}
+			return out.Print(data)
 		},
 	}
 
-	cmd.Flags().StringVar(&stageStr, "stage", "dev", "Prerelease stage (dev, alpha, beta, rc)")
+	cmd.Flags().StringVar(&fromVersion, "from", "", "Source version to bump from (required)")
+	cmd.Flags().StringVar(&kindStr, "kind", "", "Bump kind: major, minor, patch, prerelease, final (required)")
+	cmd.Flags().StringVar(&stageStr, "stage", "", "Prerelease stage for prerelease bumps (dev, alpha, beta, rc)")
+	cmd.Flags().StringVar(&ecosystem, "ecosystem", "go", "Target ecosystem for rendering (go, python, containers, terraform, github-actions)")
 	return cmd
 }
+

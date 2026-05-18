@@ -43,7 +43,7 @@ format:
 | `tagPrefix`           | string                    | `v`      | Prefix stripped from git tags before parsing (e.g. `v`) |
 | `sequenceInterpreter` | `auto` \| `numeric` \| `hash`  | `auto` | How to interpret prerelease sequences                   |
 
-**Environment variable override:** `VERCTL_TAG_PREFIX`
+**Environment variable override:** `VERGE_TAG_PREFIX`
 
 ---
 
@@ -181,9 +181,9 @@ All environment variables override the corresponding config file setting at runt
 
 | Variable               | Overrides              | Example                          |
 |------------------------|------------------------|----------------------------------|
-| `VERCTL_ECOSYSTEM`     | `ecosystem`            | `VERCTL_ECOSYSTEM=pep440`        |
-| `VERCTL_FORMAT_OUTPUT` | `format.output`        | `VERCTL_FORMAT_OUTPUT=json`      |
-| `VERCTL_TAG_PREFIX`    | `format.tagPrefix`     | `VERCTL_TAG_PREFIX=""`           |
+| `VERGE_ECOSYSTEM`     | `ecosystem`            | `VERGE_ECOSYSTEM=pep440`        |
+| `VERGE_FORMAT_OUTPUT` | `format.output`        | `VERGE_FORMAT_OUTPUT=json`      |
+| `VERGE_TAG_PREFIX`    | `format.tagPrefix`     | `VERGE_TAG_PREFIX=""`           |
 | `GITHUB_TOKEN`         | *(provider auth)*      | `GITHUB_TOKEN=ghp_xxxx`          |
 
 ---

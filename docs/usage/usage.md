@@ -466,9 +466,9 @@ autoBump:
 
 | Variable               | Overrides config key           | Description                                    |
 |------------------------|--------------------------------|------------------------------------------------|
-| `VERCTL_ECOSYSTEM`     | `ecosystem`                    | Default format scheme for rendering (`v-semver`, `semver`, `pep440`) |
-| `VERCTL_FORMAT_OUTPUT` | `format.output`                | Output format (`text` or `json`)               |
-| `VERCTL_TAG_PREFIX`    | `format.tagPrefix`             | Git tag prefix                                 |
+| `VERGE_ECOSYSTEM`     | `ecosystem`                    | Default format scheme for rendering (`v-semver`, `semver`, `pep440`) |
+| `VERGE_FORMAT_OUTPUT` | `format.output`                | Output format (`text` or `json`)               |
+| `VERGE_TAG_PREFIX`    | `format.tagPrefix`             | Git tag prefix                                 |
 | `GITHUB_TOKEN`         | *(provider auth)*              | Token for GitHub Releases and GHCR providers   |
 
 ---

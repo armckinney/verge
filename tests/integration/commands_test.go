@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func buildVerctl(t *testing.T) string {
+func buildVerge(t *testing.T) string {
 	t.Helper()
 	cmd := exec.Command("go", "build", "-o", "verge_test_bin", "./cmd/verge")
 	cmd.Dir = "../.."
@@ -17,7 +17,7 @@ func buildVerctl(t *testing.T) string {
 }
 
 func TestVersionParse_Integration(t *testing.T) {
-	bin := buildVerctl(t)
+	bin := buildVerge(t)
 	cmd := exec.Command(bin, "version", "parse", "v1.2.3")
 	out, err := cmd.CombinedOutput()
 	if err != nil {
@@ -29,7 +29,7 @@ func TestVersionParse_Integration(t *testing.T) {
 }
 
 func TestVersionBump_Integration(t *testing.T) {
-	bin := buildVerctl(t)
+	bin := buildVerge(t)
 	cmd := exec.Command(bin, "version", "bump", "--from", "v1.2.3", "--kind", "minor")
 	out, err := cmd.CombinedOutput()
 	if err != nil {

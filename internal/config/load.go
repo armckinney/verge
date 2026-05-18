@@ -11,7 +11,7 @@ func Load(configPath string) (*Config, error) {
 	cfg := Default()
 
 	if configPath == "" {
-		configPath = os.Getenv("VERCTL_CONFIG")
+		configPath = os.Getenv("VERGE_CONFIG")
 	}
 	if configPath == "" {
 		configPath = ".verge.yaml"
@@ -35,13 +35,13 @@ func Load(configPath string) (*Config, error) {
 }
 
 func applyEnvOverrides(cfg *Config) {
-	if v := os.Getenv("VERCTL_ECOSYSTEM"); v != "" {
+	if v := os.Getenv("VERGE_ECOSYSTEM"); v != "" {
 		cfg.Ecosystem = v
 	}
-	if v := os.Getenv("VERCTL_FORMAT_OUTPUT"); v != "" {
+	if v := os.Getenv("VERGE_FORMAT_OUTPUT"); v != "" {
 		cfg.Format.Output = v
 	}
-	if v := os.Getenv("VERCTL_TAG_PREFIX"); v != "" {
+	if v := os.Getenv("VERGE_TAG_PREFIX"); v != "" {
 		cfg.Format.TagPrefix = v
 	}
 }

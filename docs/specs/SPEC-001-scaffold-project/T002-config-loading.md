@@ -26,9 +26,9 @@ Implement the configuration system that loads `.verge.yaml`, validates against s
 ## Acceptance Criteria
 
 - [ ] `config.Schema` struct definition covers all config fields from semver-cli-spec section 6
-- [ ] `config.Load()` loads `.verge.yaml` from current directory or `$VERCTL_CONFIG` path
+- [ ] `config.Load()` loads `.verge.yaml` from current directory or `$VERGE_CONFIG` path
 - [ ] `config.Validate()` checks required fields and logs meaningful errors
-- [ ] Environment variables (`VERCTL_*`) can override config file values
+- [ ] Environment variables (`VERGE_*`) can override config file values
 - [ ] `config.Default()` returns safe defaults (git-tags enabled, semver output, etc.)
 - [ ] Config is accessible throughout CLI via a global or context-injected variable
 - [ ] `verge version --config /path/to/custom.yaml` works
@@ -121,7 +121,7 @@ autoBump:
 - [ ] Unit test: Load `.verge.yaml` with all fields
 - [ ] Unit test: Load config with missing optional fields → uses defaults
 - [ ] Unit test: Load invalid YAML → clear error message
-- [ ] Unit test: Override config value via env var `VERCTL_ECOSYSTEM=python`
+- [ ] Unit test: Override config value via env var `VERGE_ECOSYSTEM=python`
 - [ ] Unit test: Load non-existent config file → uses defaults (or error if required)
 - [ ] Integration test: `verge version current` loads config successfully
 

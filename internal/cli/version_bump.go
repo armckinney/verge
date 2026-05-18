@@ -122,4 +122,3 @@ Examples:
 	cmd.Flags().BoolVar(&changelog, "changelog", false, "Output changelog-friendly JSON instead of default output")
 	return cmd
 }
-

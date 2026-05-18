@@ -18,11 +18,11 @@ const (
 
 // ConventionalCommit holds parsed commit data.
 type ConventionalCommit struct {
-	Hash    string
-	Message string
-	Type    CommitType
-	Scope   string
-	Subject string
+	Hash     string
+	Message  string
+	Type     CommitType
+	Scope    string
+	Subject  string
 	Breaking bool
 }
 

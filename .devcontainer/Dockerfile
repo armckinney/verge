@@ -8,14 +8,16 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 RUN mkdir /tmp/container \
     && cd /tmp/container \
-    # indirect installs
-    && apt update \
-    # installs
-    && apt install -y \
-        postgresql-client \
+    # goreleaser repo
+    && echo 'deb [trusted=yes] https://repo.goreleaser.com/apt/ /' | tee /etc/apt/sources.list.d/goreleaser.list \
+    # supporting installs
+    && apt-get update \
+    # primary installs
+    && apt-get install --no-install-recommends -y \
+        goreleaser \
     # cleanup
-    && apt autoremove -y \
-    && apt clean -y \
+    && apt-get autoremove -y \
+    && apt-get clean -y \
     && rm -rf /var/lib/apt/lists/* \
     && rm -rf /tmp/container
 

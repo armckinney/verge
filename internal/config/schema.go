@@ -1,12 +1,12 @@
 package config
 
 type Config struct {
-	Version   int           `yaml:"version"`
-	Ecosystem string        `yaml:"ecosystem"`
-	Format    FormatConfig  `yaml:"format"`
-	Sources   SourcesConfig `yaml:"sources"`
+	Version   int            `yaml:"version"`
+	Ecosystem string         `yaml:"ecosystem"`
+	Format    FormatConfig   `yaml:"format"`
+	Sources   SourcesConfig  `yaml:"sources"`
 	Sequence  SequenceConfig `yaml:"sequence"`
-	Rules     RulesConfig   `yaml:"rules"`
+	Rules     RulesConfig    `yaml:"rules"`
 	AutoBump  AutoBumpConfig `yaml:"autoBump"`
 }
 

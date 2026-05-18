@@ -85,4 +85,3 @@ Examples:
 	cmd.Flags().StringVar(&ecosystem, "ecosystem", "all", "Target format scheme for rendering (v-semver, semver, pep440, or ecosystem alias: go, terraform, containers, github-actions, python)")
 	return cmd
 }
-

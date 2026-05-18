@@ -1,0 +1,19 @@
+{
+  "features": {
+    "https://github.com/armckinney/containers/releases/download/v1.0.5/devcontainer-feature-copilot.tgz": {
+      "version": "1.0.0",
+      "resolved": "https://github.com/armckinney/containers/releases/download/v1.0.5/devcontainer-feature-copilot.tgz",
+      "integrity": "sha256:5d9b502ece00b0736cfa7b7f9814b2d5af73ed5a3c0e41a705387f03e307c1c7"
+    },
+    "https://github.com/armckinney/containers/releases/download/v1.0.5/devcontainer-feature-gemini.tgz": {
+      "version": "1.0.0",
+      "resolved": "https://github.com/armckinney/containers/releases/download/v1.0.5/devcontainer-feature-gemini.tgz",
+      "integrity": "sha256:f65c91055efde9469ed904649d7d72ae710b728fa038d823a5562ab9a4d48481"
+    },
+    "https://github.com/armckinney/containers/releases/download/v1.0.5/devcontainer-feature-vscode-customizations.tgz": {
+      "version": "1.0.0",
+      "resolved": "https://github.com/armckinney/containers/releases/download/v1.0.5/devcontainer-feature-vscode-customizations.tgz",
+      "integrity": "sha256:2c2314c188f3bd6301c5acb219d8542bbeb85637659a755ac1eec9058595ca2e"
+    }
+  }
+}

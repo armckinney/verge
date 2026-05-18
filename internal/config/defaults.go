@@ -3,7 +3,7 @@ package config
 func Default() *Config {
 	return &Config{
 		Version:   1,
-		Ecosystem: "go",
+		Ecosystem: "v-semver",
 		Format: FormatConfig{
 			Input:               "auto",
 			Output:              "auto",
@@ -16,7 +16,7 @@ func Default() *Config {
 				Enabled:           true,
 				Fetch:             false,
 				IncludePrerelease: true,
-				EcosystemParsing:  "go",
+				EcosystemParsing:  "v-semver",
 			},
 			GitHubReleases: GitHubReleasesConfig{
 				Enabled:           false,

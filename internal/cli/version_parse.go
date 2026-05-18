@@ -31,7 +31,8 @@ Examples:
 			normalizer := version.NewNormalizer()
 			v = normalizer.Normalize(v)
 
-			ecosystemNames := []string{"go", "python", "containers", "terraform", "github-actions"}
+			// Render once per canonical format scheme.
+			ecosystemNames := []string{"v-semver", "semver", "pep440"}
 			rendered := map[string]string{}
 			for _, eco := range ecosystemNames {
 				rendered[eco] = version.NewRenderer(eco).Render(v)
@@ -81,7 +82,7 @@ Examples:
 		},
 	}
 
-	cmd.Flags().StringVar(&ecosystem, "ecosystem", "all", "Target ecosystem for rendering (go, python, containers, terraform, github-actions, all)")
+	cmd.Flags().StringVar(&ecosystem, "ecosystem", "all", "Target format scheme for rendering (v-semver, semver, pep440, or ecosystem alias: go, terraform, containers, github-actions, python)")
 	return cmd
 }
 

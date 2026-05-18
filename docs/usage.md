@@ -1,6 +1,6 @@
 # verctl Usage Documentation
 
-`verctl` is a semantic versioning CLI tool for parsing, comparing, bumping, and querying versions across multiple ecosystems (Go, Python, Containers, Terraform, GitHub Actions).
+`verctl` is a semantic versioning CLI tool for parsing, comparing, bumping, and querying versions. It supports three generalized version format schemes — `v-semver`, `semver`, and `pep440` — plus ecosystem-specific aliases for Go, Terraform, Containers, GitHub Actions, and Python.
 
 ---
 
@@ -17,7 +17,7 @@
   - [version latest](#version-latest)
   - [version info](#version-info)
 - [Output Formats](#output-formats)
-- [Ecosystems](#ecosystems)
+- [Version Format Schemes](#version-format-schemes)
 - [Exit Codes](#exit-codes)
 - [Configuration](#configuration)
 - [Environment Variables](#environment-variables)
@@ -102,7 +102,7 @@ verctl version parse <version> [flags]
 
 | Flag          | Default | Description                                                             |
 |---------------|---------|-------------------------------------------------------------------------|
-| `--ecosystem` | `all`   | Render for a specific ecosystem (`go`, `python`, `containers`, `terraform`, `github-actions`, `all`) |
+| `--ecosystem` | `all`   | Render for a specific format scheme (`v-semver`, `semver`, `pep440`, `all`) or ecosystem alias (`go`, `terraform`, `containers`, `github-actions`, `python`) |
 
 **Examples**
 
@@ -116,8 +116,8 @@ verctl version parse v1.2.3-rc.2
 # Parse a PEP 440 version
 verctl version parse 1.2.3dev4
 
-# Parse and render for Python only
-verctl version parse 1.2.3-rc.1 --ecosystem python
+# Parse and render for PEP 440 (Python) only
+verctl version parse 1.2.3-rc.1 --ecosystem pep440
 
 # JSON output
 verctl version parse v1.2.3-rc.2 --format json
@@ -136,11 +136,9 @@ sequenceType  numeric
 scheme        semver
 prerelease    true
 core          1.2.3
-rendered.go             v1.2.3-rc.2
-rendered.python         1.2.3rc2
-rendered.containers     1.2.3-rc.2
-rendered.terraform      v1.2.3-rc.2
-rendered.github-actions 1.2.3-rc.2
+rendered.v-semver       v1.2.3-rc.2
+rendered.semver         1.2.3-rc.2
+rendered.pep440         1.2.3rc2
 ```
 
 ---
@@ -187,7 +185,7 @@ verctl version bump [flags]
 | `--from`       | *(required)* | Source version to bump from                                        |
 | `--kind`       |          | Bump kind: `major`, `minor`, `patch`, `prerelease`, `final`             |
 | `--stage`      |          | Prerelease stage for `prerelease` bumps: `dev`, `alpha`, `beta`, `rc`   |
-| `--ecosystem`  | `go`     | Render output for this ecosystem                                        |
+| `--ecosystem`  | `v-semver` | Render output for this format scheme or ecosystem alias                 |
 | `--auto`       | `false`  | Auto-detect bump kind from conventional commits (requires git)          |
 | `--repo-dir`   | `.`      | Repository directory (used with `--auto`)                               |
 | `--changelog`  | `false`  | Output changelog-friendly JSON instead of default output                |
@@ -368,17 +366,29 @@ verctl version bump --from 1.2.3 --kind minor --format json | jq -r '.rendered'
 
 ---
 
-## Ecosystems
+## Version Format Schemes
 
-verctl renders versions in the canonical format for each ecosystem:
+`verctl` renders versions using three generalized format schemes. Ecosystem names are accepted as aliases for convenience.
 
-| Ecosystem        | Final format     | Prerelease format         | Example              |
-|------------------|------------------|---------------------------|----------------------|
-| `go`             | `v1.2.3`         | `v1.2.3-rc.1`             | `v1.28.0-rc.1`       |
-| `python`         | `1.2.3`          | `1.2.3rc1` (PEP 440)      | `3.11.0rc1`          |
-| `containers`     | `1.2.3`          | `1.2.3-rc.1`              | `1.25.0-rc.1`        |
-| `terraform`      | `v1.2.3`         | `v1.2.3-rc.1`             | `v4.5.0-rc.1`        |
-| `github-actions` | `v1.2.3`         | `v1.2.3-rc.1`             | `v3.5.3`             |
+### Canonical format schemes
+
+| Scheme      | Final format | Prerelease format    | Description                       |
+|-------------|--------------|----------------------|-----------------------------------|
+| `v-semver`  | `v1.2.3`     | `v1.2.3-rc.1`        | SemVer with `v` prefix            |
+| `semver`    | `1.2.3`      | `1.2.3-rc.1`         | Standard SemVer (no prefix)       |
+| `pep440`    | `1.2.3`      | `1.2.3rc1`           | Python PEP 440 prerelease format  |
+
+### Ecosystem-to-scheme mapping
+
+Use canonical scheme names in scripts and config for portability. Ecosystem aliases are provided for familiarity and backward compatibility.
+
+| Ecosystem alias  | Maps to   | Example final | Example prerelease  |
+|------------------|-----------|---------------|---------------------|
+| `go`             | `v-semver` | `v1.2.3`     | `v1.2.3-rc.1`       |
+| `terraform`      | `v-semver` | `v1.2.3`     | `v1.2.3-rc.1`       |
+| `containers`     | `semver`   | `1.2.3`      | `1.2.3-rc.1`        |
+| `github-actions` | `semver`   | `1.2.3`      | `1.2.3-rc.1`        |
+| `python`         | `pep440`   | `1.2.3`      | `1.2.3rc1`          |
 
 ---
 
@@ -405,8 +415,8 @@ verctl renders versions in the canonical format for each ecosystem:
 ```yaml
 version: 1
 
-# Default ecosystem for rendering output
-ecosystem: go
+# Default format scheme for rendering output
+ecosystem: v-semver
 
 format:
   input: auto          # Version scheme detection: auto | semver | pep440
@@ -421,7 +431,7 @@ sources:
     enabled: true
     fetch: false                 # Run `git fetch` before listing tags
     includePrerelease: true
-    ecosystemParsing: go
+    ecosystemParsing: v-semver
   github-releases:
     enabled: false
     owner: your-org
@@ -456,7 +466,7 @@ autoBump:
 
 | Variable               | Overrides config key           | Description                                    |
 |------------------------|--------------------------------|------------------------------------------------|
-| `VERCTL_ECOSYSTEM`     | `ecosystem`                    | Default ecosystem for rendering                |
+| `VERCTL_ECOSYSTEM`     | `ecosystem`                    | Default format scheme for rendering (`v-semver`, `semver`, `pep440`) |
 | `VERCTL_FORMAT_OUTPUT` | `format.output`                | Output format (`text` or `json`)               |
 | `VERCTL_TAG_PREFIX`    | `format.tagPrefix`             | Git tag prefix                                 |
 | `GITHUB_TOKEN`         | *(provider auth)*              | Token for GitHub Releases and GHCR providers   |
@@ -520,12 +530,12 @@ eval "$(verctl version parse "$TAG" --format json | jq -r '
 echo "Building $MAJOR.$MINOR.$PATCH ($STAGE)"
 ```
 
-### Multi-ecosystem release matrix
+### Multi-scheme release matrix
 
 ```bash
 VERSION="1.3.0-rc.1"
-for eco in go python containers terraform github-actions; do
-  rendered=$(verctl version parse "$VERSION" --ecosystem "$eco" --format json | jq -r .rendered)
-  echo "$eco: $rendered"
+for scheme in v-semver semver pep440; do
+  rendered=$(verctl version parse "$VERSION" --ecosystem "$scheme" --format json | jq -r .rendered)
+  echo "$scheme: $rendered"
 done
 ```

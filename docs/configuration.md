@@ -17,10 +17,10 @@ If no config file is found, all defaults apply.
 
 ## Top-level Fields
 
-| Field       | Type   | Default | Description                       |
-|-------------|--------|---------|-----------------------------------|
-| `version`   | int    | `1`     | Config schema version (always `1`) |
-| `ecosystem` | string | `go`    | Default ecosystem for rendering   |
+| Field       | Type   | Default    | Description                                    |
+|-------------|--------|------------|------------------------------------------------|
+| `version`   | int    | `1`        | Config schema version (always `1`)             |
+| `ecosystem` | string | `v-semver` | Default format scheme for rendering. Accepts canonical names (`v-semver`, `semver`, `pep440`) or ecosystem aliases (`go`, `terraform`, `containers`, `github-actions`, `python`). |
 
 ---
 
@@ -61,7 +61,7 @@ sources:
     enabled: true
     fetch: false
     includePrerelease: true
-    ecosystemParsing: go
+    ecosystemParsing: v-semver
   github-releases:
     enabled: false
     owner: ""
@@ -87,7 +87,7 @@ Available providers: `git-tags`, `github-releases`, `ghcr`
 | `enabled`           | bool    | `true`  | Enable this provider                                    |
 | `fetch`             | bool    | `false` | Run `git fetch --tags` before listing                   |
 | `includePrerelease` | bool    | `true`  | Include prerelease tags in results                      |
-| `ecosystemParsing`  | string  | `go`    | Ecosystem hint for tag format detection                 |
+| `ecosystemParsing`  | string  | `v-semver` | Format scheme hint for tag detection (`v-semver`, `semver`, `pep440`, or ecosystem alias) |
 
 ### `sources.github-releases`
 
@@ -181,7 +181,7 @@ All environment variables override the corresponding config file setting at runt
 
 | Variable               | Overrides              | Example                          |
 |------------------------|------------------------|----------------------------------|
-| `VERCTL_ECOSYSTEM`     | `ecosystem`            | `VERCTL_ECOSYSTEM=python`        |
+| `VERCTL_ECOSYSTEM`     | `ecosystem`            | `VERCTL_ECOSYSTEM=pep440`        |
 | `VERCTL_FORMAT_OUTPUT` | `format.output`        | `VERCTL_FORMAT_OUTPUT=json`      |
 | `VERCTL_TAG_PREFIX`    | `format.tagPrefix`     | `VERCTL_TAG_PREFIX=""`           |
 | `GITHUB_TOKEN`         | *(provider auth)*      | `GITHUB_TOKEN=ghp_xxxx`          |
@@ -194,7 +194,7 @@ A `.verctl.yaml` for a Python project published to GHCR and GitHub Releases:
 
 ```yaml
 version: 1
-ecosystem: python
+ecosystem: pep440
 
 format:
   tagPrefix: v

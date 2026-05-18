@@ -114,15 +114,15 @@ jobs:
 
 ## Shell Script Patterns
 
-### Get current version and render for ecosystem
+### Get current version and render for format scheme
 
 ```bash
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Get the current stable version rendered for Python
-PYTHON_VERSION=$(verctl version current --ecosystem python --format json | jq -r '.rendered')
-echo "Current Python version: $PYTHON_VERSION"
+# Get the current stable version rendered in PEP 440 format (Python)
+PYTHON_VERSION=$(verctl version current --ecosystem pep440 --format json | jq -r '.rendered')
+echo "Current PEP 440 version: $PYTHON_VERSION"
 
 # Write to version file
 echo "__version__ = \"$PYTHON_VERSION\"" > src/_version.py
@@ -135,7 +135,7 @@ echo "__version__ = \"$PYTHON_VERSION\"" > src/_version.py
 set -euo pipefail
 
 CURRENT=$(verctl version current --format json | jq -r '.normalized')
-NEW=$(verctl version bump --from "$CURRENT" --kind "$1" --ecosystem go --format json | jq -r '.rendered')
+NEW=$(verctl version bump --from "$CURRENT" --kind "$1" --ecosystem v-semver --format json | jq -r '.rendered')
 
 echo "Bumping $CURRENT → $NEW"
 git tag "$NEW"

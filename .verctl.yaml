@@ -1,6 +1,6 @@
 version: 1
 
-ecosystem: go
+ecosystem: v-semver
 
 format:
   input: auto
@@ -15,7 +15,7 @@ sources:
     enabled: true
     fetch: false
     includePrerelease: true
-    ecosystemParsing: go
+    ecosystemParsing: v-semver
 
 sequence:
   hashLength: 7

@@ -40,7 +40,33 @@ func RenderVersion(ecosystem string, major, minor, patch int, stage string, sequ
 	return r.Render(major, minor, patch, stage, sequence, isPrerelease)
 }
 
-// All returns all registered ecosystem names.
+// canonicalFormats lists the primary format schemes in deterministic order.
+var canonicalFormats = []string{"v-semver", "semver", "pep440"}
+
+// aliases maps ecosystem names to canonical format scheme names.
+var aliases = map[string]string{
+	"go":             "v-semver",
+	"terraform":      "v-semver",
+	"containers":     "semver",
+	"github-actions": "semver",
+	"python":         "pep440",
+}
+
+// Resolve maps an ecosystem alias to its canonical format name.
+// Returns the input unchanged if it is already a canonical name or unknown.
+func Resolve(name string) string {
+	if canonical, ok := aliases[name]; ok {
+		return canonical
+	}
+	return name
+}
+
+// Canonical returns the canonical format scheme names in a stable order.
+func Canonical() []string {
+	return canonicalFormats
+}
+
+// All returns all registered names (canonical + aliases) in a stable order.
 func All() []string {
 	mu.RLock()
 	defer mu.RUnlock()
@@ -52,11 +78,22 @@ func All() []string {
 }
 
 func init() {
-	Register(&GoRenderer{})
-	Register(&PythonRenderer{})
-	Register(&ContainerRenderer{})
-	Register(&TerraformRenderer{})
-	Register(&GitHubActionsRenderer{})
+	// Register canonical format renderers.
+	vsv := &VSemVerRenderer{}
+	sv := &SemVerRenderer{}
+	pep := &PEP440Renderer{}
+	Register(vsv)
+	Register(sv)
+	Register(pep)
+
+	// Register ecosystem aliases pointing to canonical renderers.
+	mu.Lock()
+	registry["go"] = vsv
+	registry["terraform"] = vsv
+	registry["containers"] = sv
+	registry["github-actions"] = sv
+	registry["python"] = pep
+	mu.Unlock()
 }
 
 

@@ -90,7 +90,7 @@ Examples:
 			}
 
 			if ecosystem == "" {
-				ecosystem = "go"
+				ecosystem = "v-semver"
 			}
 			rendered := version.NewRenderer(ecosystem).Render(bumped)
 
@@ -116,7 +116,7 @@ Examples:
 	cmd.Flags().StringVar(&fromVersion, "from", "", "Source version to bump from (required)")
 	cmd.Flags().StringVar(&kindStr, "kind", "", "Bump kind: major, minor, patch, prerelease, final")
 	cmd.Flags().StringVar(&stageStr, "stage", "", "Prerelease stage for prerelease bumps (dev, alpha, beta, rc)")
-	cmd.Flags().StringVar(&ecosystem, "ecosystem", "go", "Target ecosystem for rendering (go, python, containers, terraform, github-actions)")
+	cmd.Flags().StringVar(&ecosystem, "ecosystem", "v-semver", "Target format scheme for rendering (v-semver, semver, pep440, or ecosystem alias: go, terraform, containers, github-actions, python)")
 	cmd.Flags().BoolVar(&autoDetect, "auto", false, "Auto-detect bump kind from conventional commits since --from tag")
 	cmd.Flags().StringVar(&repoDir, "repo-dir", ".", "Repository directory (used with --auto)")
 	cmd.Flags().BoolVar(&changelog, "changelog", false, "Output changelog-friendly JSON instead of default output")

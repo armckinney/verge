@@ -84,7 +84,7 @@ Examples:
 	}
 
 	cmd.Flags().StringVar(&repoDir, "repo-dir", ".", "Repository directory")
-	cmd.Flags().StringVar(&ecosystem, "ecosystem", "", "Target ecosystem for rendering (go, python, containers, terraform, github-actions)")
+	cmd.Flags().StringVar(&ecosystem, "ecosystem", "", "Target format scheme for rendering (v-semver, semver, pep440, or ecosystem alias: go, terraform, containers, github-actions, python)")
 	cmd.Flags().BoolVar(&explain, "explain", false, "Show selection reasoning")
 	return cmd
 }

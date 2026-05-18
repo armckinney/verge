@@ -21,7 +21,7 @@ Migrate the repository from an API server template structure into a CLI applicat
 New project structure:
 
 ```
-cmd/verctl/
+cmd/verge/
   main.go              # CLI entry point (replaces cmd/api/main.go)
 internal/
   cli/                 # NEW: command definitions and orchestration
@@ -55,33 +55,33 @@ tests/
   fixtures/            # NEW: test data for versioning
     versions.go
     (existing db setup can be removed or archived)
-.verctl.yaml           # NEW: default config file template
+.verge.yaml           # NEW: default config file template
 go.mod                 # Update module path reference
 ```
 
 ## Acceptance Criteria
 
-- [ ] `cmd/verctl/main.go` exists and compiles
+- [ ] `cmd/verge/main.go` exists and compiles
 - [ ] All old API-related code in `internal/` is removed or moved to an archive branch
 - [ ] `internal/cli/root.go` imports properly and defines a Cobra root command
 - [ ] `internal/version/model.go` defines the canonical `Version` struct
 - [ ] `internal/config/schema.go` defines the CLI config schema (YAML)
 - [ ] `go.mod` is updated with current dependencies (remove HTTP server libs if possible)
-- [ ] `make build` produces a `verctl` binary (not `main`)
+- [ ] `make build` produces a `verge` binary (not `main`)
 - [ ] `make run` is updated to run the CLI (or removed in favor of `make build`)
 - [ ] Old database connection logic and environment variable loading for API is removed
-- [ ] `.verctl.yaml` template file exists with basic structure
+- [ ] `.verge.yaml` template file exists with basic structure
 
 ## Context
 
 ### Files to Create
 
-- `cmd/verctl/main.go`
+- `cmd/verge/main.go`
 - `internal/cli/root.go`
 - `internal/cli/version.go`
 - `internal/version/model.go`
 - `internal/config/schema.go`
-- `.verctl.yaml` (template)
+- `.verge.yaml` (template)
 
 ### Files to Remove
 
@@ -96,7 +96,7 @@ go.mod                 # Update module path reference
 ### Files to Update
 
 - `go.mod` — remove HTTP and database dependencies if no longer needed
-- `Makefile` — update build target from `main` to `verctl`; add `build-snapshot` target for goreleaser
+- `Makefile` — update build target from `main` to `verge`; add `build-snapshot` target for goreleaser
 - `README.md` — update Getting Started section for CLI workflow
 - `.gitignore` — add `/dist/` directory for goreleaser artifacts
 - `tests/` — archive existing database tests or move to separate branch
@@ -112,7 +112,7 @@ During this migration, establish the foundation for cross-platform builds:
 ### Design Notes
 
 1. **Cobra Framework**: Use `github.com/spf13/cobra` for command structure (already in go.mod)
-2. **Main Entry Point**: Minimal `cmd/verctl/main.go` that just calls `cli.Execute()`
+2. **Main Entry Point**: Minimal `cmd/verge/main.go` that just calls `cli.Execute()`
 3. **Version Model**: The canonical `Version` struct will be the core abstraction:
    ```go
    type Version struct {
@@ -131,8 +131,8 @@ During this migration, establish the foundation for cross-platform builds:
 ## Testing
 
 - [ ] Unit test: `root.go` can instantiate the root command
-- [ ] Integration: `verctl --version` returns version string
-- [ ] Build check: `go build ./cmd/verctl` succeeds with no errors
+- [ ] Integration: `verge --version` returns version string
+- [ ] Build check: `go build ./cmd/verge` succeeds with no errors
 
 ## Related Tickets
 

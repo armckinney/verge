@@ -1,6 +1,6 @@
-# verctl Usage Documentation
+# verge Usage Documentation
 
-`verctl` is a semantic versioning CLI tool for parsing, comparing, bumping, and querying versions. It supports three generalized version format schemes — `v-semver`, `semver`, and `pep440` — plus ecosystem-specific aliases for Go, Terraform, Containers, GitHub Actions, and Python.
+`verge` is a semantic versioning CLI tool for parsing, comparing, bumping, and querying versions. It supports three generalized version format schemes — `v-semver`, `semver`, and `pep440` — plus ecosystem-specific aliases for Go, Terraform, Containers, GitHub Actions, and Python.
 
 ---
 
@@ -32,13 +32,13 @@
 ```bash
 git clone https://github.com/armckinney/template-go
 cd template-go
-make build          # produces ./verctl
+make build          # produces ./verge
 ```
 
 ### Using Go install
 
 ```bash
-go install example.com/template-go/cmd/verctl@latest
+go install example.com/template-go/cmd/verge@latest
 ```
 
 ### Pre-built releases
@@ -47,11 +47,11 @@ Download from the [releases page](https://github.com/armckinney/template-go/rele
 
 | Platform       | Binary                         |
 |----------------|--------------------------------|
-| Linux amd64    | `verctl-linux-amd64`           |
-| Linux arm64    | `verctl-linux-arm64`           |
-| macOS arm64    | `verctl-darwin-arm64`          |
-| Windows amd64  | `verctl-windows-amd64.exe`     |
-| Windows arm64  | `verctl-windows-arm64.exe`     |
+| Linux amd64    | `verge-linux-amd64`           |
+| Linux arm64    | `verge-linux-arm64`           |
+| macOS arm64    | `verge-darwin-arm64`          |
+| Windows amd64  | `verge-windows-amd64.exe`     |
+| Windows arm64  | `verge-windows-arm64.exe`     |
 
 ---
 
@@ -59,19 +59,19 @@ Download from the [releases page](https://github.com/armckinney/template-go/rele
 
 ```bash
 # Parse a version
-verctl version parse v1.2.3-rc.1
+verge version parse v1.2.3-rc.1
 
 # Compare two versions (exit code 10 = left < right)
-verctl version compare 1.2.3 2.0.0; echo $?
+verge version compare 1.2.3 2.0.0; echo $?
 
 # Bump a version
-verctl version bump --from 1.2.3 --kind minor
+verge version bump --from 1.2.3 --kind minor
 
 # Get current version from git tags
-verctl version current
+verge version current
 
 # Auto-detect bump kind from conventional commits
-verctl version bump --from 1.2.3 --auto
+verge version bump --from 1.2.3 --auto
 ```
 
 ---
@@ -82,7 +82,7 @@ Available on every command:
 
 | Flag               | Default         | Description                              |
 |--------------------|-----------------|------------------------------------------|
-| `-c, --config`     | `.verctl.yaml`  | Path to config file                      |
+| `-c, --config`     | `.verge.yaml`  | Path to config file                      |
 | `-f, --format`     | `text`          | Output format: `text` or `json`          |
 | `-v, --verbose`    | `false`         | Enable verbose output                    |
 
@@ -95,7 +95,7 @@ Available on every command:
 Parse a version string and display its components and ecosystem renderings.
 
 ```
-verctl version parse <version> [flags]
+verge version parse <version> [flags]
 ```
 
 **Flags**
@@ -108,19 +108,19 @@ verctl version parse <version> [flags]
 
 ```bash
 # Parse a plain semver
-verctl version parse 1.2.3
+verge version parse 1.2.3
 
 # Parse a v-prefixed prerelease
-verctl version parse v1.2.3-rc.2
+verge version parse v1.2.3-rc.2
 
 # Parse a PEP 440 version
-verctl version parse 1.2.3dev4
+verge version parse 1.2.3dev4
 
 # Parse and render for PEP 440 (Python) only
-verctl version parse 1.2.3-rc.1 --ecosystem pep440
+verge version parse 1.2.3-rc.1 --ecosystem pep440
 
 # JSON output
-verctl version parse v1.2.3-rc.2 --format json
+verge version parse v1.2.3-rc.2 --format json
 ```
 
 **Text output** (example for `v1.2.3-rc.2`):
@@ -148,7 +148,7 @@ rendered.pep440         1.2.3rc2
 Compare two version strings.
 
 ```
-verctl version compare <left> <right> [flags]
+verge version compare <left> <right> [flags]
 ```
 
 Exits with `0` (equal), `10` (left < right), or `11` (left > right).
@@ -156,12 +156,12 @@ Exits with `0` (equal), `10` (left < right), or `11` (left > right).
 **Examples**
 
 ```bash
-verctl version compare 1.2.3 2.0.0   # exit 10
-verctl version compare 2.0.0 1.2.3   # exit 11
-verctl version compare 1.2.3 1.2.3   # exit 0
+verge version compare 1.2.3 2.0.0   # exit 10
+verge version compare 2.0.0 1.2.3   # exit 11
+verge version compare 1.2.3 1.2.3   # exit 0
 
 # In a script
-if verctl version compare "$CURRENT" "$CANDIDATE"; then
+if verge version compare "$CURRENT" "$CANDIDATE"; then
   echo "equal"
 elif [ $? -eq 10 ]; then
   echo "$CANDIDATE is newer"
@@ -175,7 +175,7 @@ fi
 Compute the next version from a given version and bump kind.
 
 ```
-verctl version bump [flags]
+verge version bump [flags]
 ```
 
 **Flags**
@@ -204,23 +204,23 @@ verctl version bump [flags]
 
 ```bash
 # Bump minor
-verctl version bump --from 1.2.3 --kind minor
+verge version bump --from 1.2.3 --kind minor
 # → 1.3.0
 
 # Bump to a prerelease
-verctl version bump --from 1.2.3 --kind prerelease --stage rc
+verge version bump --from 1.2.3 --kind prerelease --stage rc
 # → 1.2.4-rc.1
 
 # Promote a prerelease to final
-verctl version bump --from 1.2.3-rc.1 --kind final
+verge version bump --from 1.2.3-rc.1 --kind final
 # → 1.2.3
 
 # Auto-detect from conventional commits
-verctl version bump --from 1.2.3 --auto
+verge version bump --from 1.2.3 --auto
 # reads git commits since tag v1.2.3
 
 # Changelog JSON output
-verctl version bump --from 1.2.3 --kind minor --changelog --format json
+verge version bump --from 1.2.3 --kind minor --changelog --format json
 ```
 
 **Changelog JSON output** (with `--changelog --format json`):
@@ -242,7 +242,7 @@ verctl version bump --from 1.2.3 --kind minor --changelog --format json
 
 **Auto-bump conventional commits**
 
-With `--auto`, verctl reads `git log <from>..HEAD` and determines the bump kind:
+With `--auto`, verge reads `git log <from>..HEAD` and determines the bump kind:
 
 | Commit prefix       | Bump kind |
 |---------------------|-----------|
@@ -258,7 +258,7 @@ With `--auto`, verctl reads `git log <from>..HEAD` and determines the bump kind:
 Get the highest (current) version from git tags, excluding prereleases by default.
 
 ```
-verctl version current [flags]
+verge version current [flags]
 ```
 
 **Flags**
@@ -272,10 +272,10 @@ verctl version current [flags]
 **Examples**
 
 ```bash
-verctl version current
-verctl version current --ecosystem python
-verctl version current --explain
-verctl version current --format json
+verge version current
+verge version current --ecosystem python
+verge version current --explain
+verge version current --format json
 ```
 
 ---
@@ -285,7 +285,7 @@ verctl version current --format json
 Get the latest (highest) version from git tags, with optional stage/core filtering.
 
 ```
-verctl version latest [flags]
+verge version latest [flags]
 ```
 
 **Flags**
@@ -302,29 +302,29 @@ verctl version latest [flags]
 
 ```bash
 # Latest overall
-verctl version latest
+verge version latest
 
 # Latest rc candidate
-verctl version latest --stage rc
+verge version latest --stage rc
 
 # Latest dev build for a specific core version
-verctl version latest --core 1.2.3 --stage dev
+verge version latest --core 1.2.3 --stage dev
 
 # JSON output
-verctl version latest --format json
+verge version latest --format json
 
 # Show decision reasoning
-verctl version latest --explain
+verge version latest --explain
 ```
 
 ---
 
 ### version info
 
-Show the verctl build version information.
+Show the verge build version information.
 
 ```bash
-verctl version info
+verge version info
 ```
 
 ---
@@ -360,7 +360,7 @@ Machine-readable JSON object:
 Use JSON output when integrating with CI scripts, `jq`, or changelog tools:
 
 ```bash
-verctl version bump --from 1.2.3 --kind minor --format json | jq -r '.rendered'
+verge version bump --from 1.2.3 --kind minor --format json | jq -r '.rendered'
 # v1.3.0
 ```
 
@@ -368,7 +368,7 @@ verctl version bump --from 1.2.3 --kind minor --format json | jq -r '.rendered'
 
 ## Version Format Schemes
 
-`verctl` renders versions using three generalized format schemes. Ecosystem names are accepted as aliases for convenience.
+`verge` renders versions using three generalized format schemes. Ecosystem names are accepted as aliases for convenience.
 
 ### Canonical format schemes
 
@@ -410,7 +410,7 @@ Use canonical scheme names in scripts and config for portability. Ecosystem alia
 
 ## Configuration
 
-`verctl` looks for `.verctl.yaml` in the current directory (or the path given by `--config`). All settings are optional and fall back to defaults.
+`verge` looks for `.verge.yaml` in the current directory (or the path given by `--config`). All settings are optional and fall back to defaults.
 
 ```yaml
 version: 1
@@ -487,10 +487,10 @@ jobs:
           fetch-depth: 0  # required for git log history
 
       - name: Get current version
-        run: echo "CURRENT=$(verctl version current --format json | jq -r .version)" >> $GITHUB_ENV
+        run: echo "CURRENT=$(verge version current --format json | jq -r .version)" >> $GITHUB_ENV
 
       - name: Auto-detect next version from conventional commits
-        run: echo "NEXT=$(verctl version bump --from "$CURRENT" --auto --format json | jq -r .to)" >> $GITHUB_ENV
+        run: echo "NEXT=$(verge version bump --from "$CURRENT" --auto --format json | jq -r .to)" >> $GITHUB_ENV
 
       - name: Tag and push
         run: |
@@ -504,10 +504,10 @@ jobs:
 #!/usr/bin/env bash
 set -euo pipefail
 
-CURRENT=$(verctl version current --format json | jq -r .version)
+CURRENT=$(verge version current --format json | jq -r .version)
 PROPOSED="${1:?usage: $0 <proposed-version>}"
 
-verctl version compare "$CURRENT" "$PROPOSED"
+verge version compare "$CURRENT" "$PROPOSED"
 CODE=$?
 
 if [ "$CODE" -eq 11 ]; then
@@ -521,7 +521,7 @@ echo "OK: $PROPOSED is valid next version (current: $CURRENT)"
 
 ```bash
 TAG="v1.3.0-rc.2"
-eval "$(verctl version parse "$TAG" --format json | jq -r '
+eval "$(verge version parse "$TAG" --format json | jq -r '
   "MAJOR=\(.parsed.major)",
   "MINOR=\(.parsed.minor)",
   "PATCH=\(.parsed.patch)",
@@ -535,7 +535,7 @@ echo "Building $MAJOR.$MINOR.$PATCH ($STAGE)"
 ```bash
 VERSION="1.3.0-rc.1"
 for scheme in v-semver semver pep440; do
-  rendered=$(verctl version parse "$VERSION" --ecosystem "$scheme" --format json | jq -r .rendered)
+  rendered=$(verge version parse "$VERSION" --ecosystem "$scheme" --format json | jq -r .rendered)
   echo "$scheme: $rendered"
 done
 ```

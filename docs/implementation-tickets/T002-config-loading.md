@@ -7,7 +7,7 @@
 
 ## Objective
 
-Implement the configuration system that loads `.verctl.yaml`, validates against schema, and exposes configuration to all CLI commands.
+Implement the configuration system that loads `.verge.yaml`, validates against schema, and exposes configuration to all CLI commands.
 
 ## Current State
 
@@ -16,7 +16,7 @@ Implement the configuration system that loads `.verctl.yaml`, validates against 
 
 ## Target State
 
-- `.verctl.yaml` is loaded from project root or config path
+- `.verge.yaml` is loaded from project root or config path
 - Configuration is validated against a JSON schema at startup
 - Config is available as a singleton or dependency-injected struct to all commands
 - Environment variables can override config values
@@ -26,12 +26,12 @@ Implement the configuration system that loads `.verctl.yaml`, validates against 
 ## Acceptance Criteria
 
 - [ ] `config.Schema` struct definition covers all config fields from semver-cli-spec section 6
-- [ ] `config.Load()` loads `.verctl.yaml` from current directory or `$VERCTL_CONFIG` path
+- [ ] `config.Load()` loads `.verge.yaml` from current directory or `$VERCTL_CONFIG` path
 - [ ] `config.Validate()` checks required fields and logs meaningful errors
 - [ ] Environment variables (`VERCTL_*`) can override config file values
 - [ ] `config.Default()` returns safe defaults (git-tags enabled, semver output, etc.)
 - [ ] Config is accessible throughout CLI via a global or context-injected variable
-- [ ] `verctl version --config /path/to/custom.yaml` works
+- [ ] `verge version --config /path/to/custom.yaml` works
 - [ ] YAML parsing handles missing optional fields gracefully
 - [ ] Invalid YAML returns clear error message with line number
 
@@ -45,7 +45,7 @@ Implement the configuration system that loads `.verctl.yaml`, validates against 
 
 ### Files to Update
 
-- `cmd/verctl/main.go` — load config at startup
+- `cmd/verge/main.go` — load config at startup
 - `internal/cli/root.go` — expose config to subcommands
 
 ### Config Schema Structure
@@ -118,12 +118,12 @@ autoBump:
 
 ## Testing
 
-- [ ] Unit test: Load `.verctl.yaml` with all fields
+- [ ] Unit test: Load `.verge.yaml` with all fields
 - [ ] Unit test: Load config with missing optional fields → uses defaults
 - [ ] Unit test: Load invalid YAML → clear error message
 - [ ] Unit test: Override config value via env var `VERCTL_ECOSYSTEM=python`
 - [ ] Unit test: Load non-existent config file → uses defaults (or error if required)
-- [ ] Integration test: `verctl version current` loads config successfully
+- [ ] Integration test: `verge version current` loads config successfully
 
 ## Related Tickets
 

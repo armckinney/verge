@@ -1,6 +1,6 @@
 # CI/CD Integration Guide
 
-`verctl` is designed to work seamlessly in CI pipelines. This guide covers common patterns for GitHub Actions, shell scripts, and release automation.
+`verge` is designed to work seamlessly in CI pipelines. This guide covers common patterns for GitHub Actions, shell scripts, and release automation.
 
 ---
 
@@ -33,20 +33,20 @@ jobs:
         with:
           fetch-depth: 0        # required for git tag history
 
-      - name: Install verctl
+      - name: Install verge
         run: |
-          curl -sSL https://github.com/armckinney/template-go/releases/latest/download/verctl-linux-amd64 \
-            -o /usr/local/bin/verctl
-          chmod +x /usr/local/bin/verctl
+          curl -sSL https://github.com/armckinney/template-go/releases/latest/download/verge-linux-amd64 \
+            -o /usr/local/bin/verge
+          chmod +x /usr/local/bin/verge
 
       - name: Get current version
         id: current
-        run: echo "version=$(verctl version current --format json | jq -r '.rendered')" >> $GITHUB_OUTPUT
+        run: echo "version=$(verge version current --format json | jq -r '.rendered')" >> $GITHUB_OUTPUT
 
       - name: Auto-detect bump kind
         id: bump
         run: |
-          NEW=$(verctl version bump --from ${{ steps.current.outputs.version }} --auto --format json | jq -r '.to')
+          NEW=$(verge version bump --from ${{ steps.current.outputs.version }} --auto --format json | jq -r '.to')
           echo "new_version=$NEW" >> $GITHUB_OUTPUT
 
       - name: Tag and push
@@ -61,7 +61,7 @@ jobs:
 - name: Parse version
   id: ver
   run: |
-    JSON=$(verctl version parse ${{ github.ref_name }} --format json)
+    JSON=$(verge version parse ${{ github.ref_name }} --format json)
     echo "major=$(echo $JSON | jq -r '.parsed.major')" >> $GITHUB_OUTPUT
     echo "minor=$(echo $JSON | jq -r '.parsed.minor')" >> $GITHUB_OUTPUT
     echo "patch=$(echo $JSON | jq -r '.parsed.patch')" >> $GITHUB_OUTPUT
@@ -82,7 +82,7 @@ jobs:
 - name: Parse version
   id: ver
   run: |
-    STAGE=$(verctl version parse ${{ github.ref_name }} --format json | jq -r '.parsed.stage')
+    STAGE=$(verge version parse ${{ github.ref_name }} --format json | jq -r '.parsed.stage')
     echo "stage=$STAGE" >> $GITHUB_OUTPUT
 
 - name: Publish to production
@@ -99,9 +99,9 @@ jobs:
 ```yaml
 - name: Check version is newer
   run: |
-    CURRENT=$(verctl version current --format json | jq -r '.normalized')
+    CURRENT=$(verge version current --format json | jq -r '.normalized')
     CANDIDATE="${{ github.ref_name }}"
-    verctl version compare "$CURRENT" "$CANDIDATE"
+    verge version compare "$CURRENT" "$CANDIDATE"
     STATUS=$?
     if [ $STATUS -eq 11 ]; then
       echo "Error: $CANDIDATE is older than current $CURRENT"
@@ -121,7 +121,7 @@ jobs:
 set -euo pipefail
 
 # Get the current stable version rendered in PEP 440 format (Python)
-PYTHON_VERSION=$(verctl version current --ecosystem pep440 --format json | jq -r '.rendered')
+PYTHON_VERSION=$(verge version current --ecosystem pep440 --format json | jq -r '.rendered')
 echo "Current PEP 440 version: $PYTHON_VERSION"
 
 # Write to version file
@@ -134,8 +134,8 @@ echo "__version__ = \"$PYTHON_VERSION\"" > src/_version.py
 #!/usr/bin/env bash
 set -euo pipefail
 
-CURRENT=$(verctl version current --format json | jq -r '.normalized')
-NEW=$(verctl version bump --from "$CURRENT" --kind "$1" --ecosystem v-semver --format json | jq -r '.rendered')
+CURRENT=$(verge version current --format json | jq -r '.normalized')
+NEW=$(verge version bump --from "$CURRENT" --kind "$1" --ecosystem v-semver --format json | jq -r '.rendered')
 
 echo "Bumping $CURRENT → $NEW"
 git tag "$NEW"
@@ -150,7 +150,7 @@ Usage: `./scripts/release.sh minor`
 ```bash
 #!/usr/bin/env bash
 VERSION=$1
-STAGE=$(verctl version parse "$VERSION" --format json | jq -r '.parsed.stage')
+STAGE=$(verge version parse "$VERSION" --format json | jq -r '.parsed.stage')
 
 if [ "$STAGE" = "final" ]; then
   echo "$VERSION is a stable release"
@@ -164,13 +164,13 @@ fi
 
 ```bash
 #!/usr/bin/env bash
-# Print versions in ascending order using verctl compare as sort key
+# Print versions in ascending order using verge compare as sort key
 versions=("v2.0.0" "v1.2.3" "v1.3.0-rc.1" "v1.3.0")
 
 printf '%s\n' "${versions[@]}" | sort -t. -k1,1V -k2,2n -k3,3n
 # For correct prerelease ordering, compare pairs:
 for v in "${versions[@]}"; do
-  echo "$(verctl version parse "$v" --format json | jq -r '"\(.parsed.major).\(.parsed.minor).\(.parsed.patch) \(.parsed.stage) \(.parsed.sequence // 0)"') $v"
+  echo "$(verge version parse "$v" --format json | jq -r '"\(.parsed.major).\(.parsed.minor).\(.parsed.patch) \(.parsed.stage) \(.parsed.sequence // 0)"') $v"
 done | sort -k1,1n -k2,2n -k3,3n | awk '{print $NF}'
 ```
 
@@ -178,7 +178,7 @@ done | sort -k1,1n -k2,2n -k3,3n | awk '{print $NF}'
 
 ## Auto-Bump with Conventional Commits
 
-`verctl version bump --auto` reads commit messages since the `--from` tag and determines the bump kind automatically.
+`verge version bump --auto` reads commit messages since the `--from` tag and determines the bump kind automatically.
 
 ### Commit message format
 
@@ -204,17 +204,17 @@ done | sort -k1,1n -k2,2n -k3,3n | awk '{print $NF}'
 
 ```bash
 # Get current version from latest tag
-CURRENT=$(verctl version current --format json | jq -r '.normalized')
+CURRENT=$(verge version current --format json | jq -r '.normalized')
 
 # Auto-detect bump and compute new version
-NEW=$(verctl version bump --from "$CURRENT" --auto --format json | jq -r '.to')
+NEW=$(verge version bump --from "$CURRENT" --auto --format json | jq -r '.to')
 
 echo "Bumping $CURRENT → $NEW"
 ```
 
 ### Custom breaking tokens
 
-Configure in `.verctl.yaml`:
+Configure in `.verge.yaml`:
 
 ```yaml
 autoBump:
@@ -232,7 +232,7 @@ autoBump:
 
 ### GitHub Releases provider
 
-Configure in `.verctl.yaml`:
+Configure in `.verge.yaml`:
 
 ```yaml
 sources:
@@ -249,7 +249,7 @@ Set `GITHUB_TOKEN` for private repos or to avoid rate limits:
 
 ```bash
 export GITHUB_TOKEN=ghp_xxxx
-verctl version current
+verge version current
 ```
 
 ### GHCR (Container Registry) provider
@@ -280,7 +280,7 @@ ghcr:
 ### Generate changelog JSON on bump
 
 ```bash
-verctl version bump \
+verge version bump \
   --from 1.2.3 \
   --kind minor \
   --changelog \
@@ -308,7 +308,7 @@ Output schema:
 
 ```bash
 # Generate changelog data
-verctl version bump --from "$CURRENT" --auto --changelog --format json > bump.json
+verge version bump --from "$CURRENT" --auto --changelog --format json > bump.json
 
 # Extract fields
 FROM=$(jq -r '.version.from' bump.json)
@@ -326,7 +326,7 @@ echo "**Bump type:** $BUMP (from $FROM)" >> CHANGELOG.md
 - name: Generate release notes
   id: notes
   run: |
-    JSON=$(verctl version bump --from "${{ steps.current.outputs.version }}" \
+    JSON=$(verge version bump --from "${{ steps.current.outputs.version }}" \
       --auto --changelog --format json)
     FROM=$(echo $JSON | jq -r '.version.from')
     TO=$(echo $JSON | jq -r '.version.to')

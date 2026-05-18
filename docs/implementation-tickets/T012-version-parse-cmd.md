@@ -15,7 +15,7 @@ Implement the `version parse` command to validate, parse, and display version in
 
 ## Target State
 
-- `verctl version parse <version>` parses and normalizes input
+- `verge version parse <version>` parses and normalizes input
 - `--output` flag selects rendering format (semver, pep440, or ecosystem-specific)
 - `--ecosystem` flag selects target ecosystem for rendering
 - Output is available in text and JSON formats
@@ -24,7 +24,7 @@ Implement the `version parse` command to validate, parse, and display version in
 ## Acceptance Criteria
 
 - [ ] `internal/cli/version_parse.go` implements full logic
-- [ ] Command signature: `verctl version parse <version> [flags]`
+- [ ] Command signature: `verge version parse <version> [flags]`
 - [ ] `--output` flag with choices: semver, pep440, auto
 - [ ] `--ecosystem` flag with choices: go, python, containers, terraform, github-actions, auto
 - [ ] `--format` flag with choices: text, json
@@ -43,7 +43,7 @@ Implement the `version parse` command to validate, parse, and display version in
 
 ```bash
 # Basic parsing
-$ verctl version parse 1.2.3
+$ verge version parse 1.2.3
 Version:        1.2.3
 Major:          1
 Minor:          2
@@ -53,7 +53,7 @@ Sequence:       (none)
 Scheme:         semver
 
 # Prerelease
-$ verctl version parse v1.2.3-dev.4
+$ verge version parse v1.2.3-dev.4
 Version:        v1.2.3-dev.4
 Major:          1
 Minor:          2
@@ -65,7 +65,7 @@ Rendered (Python): 1.2.3dev4
 Scheme:         semver
 
 # With JSON output
-$ verctl version parse 1.2.3 --format json
+$ verge version parse 1.2.3 --format json
 {
   "input": "1.2.3",
   "parsed": {
@@ -155,8 +155,8 @@ Rendered forms:
 - [ ] Unit test: Reject invalid input with clear error
 - [ ] Unit test: JSON output is valid JSON
 - [ ] Unit test: All ecosystems render correctly
-- [ ] Integration test: `verctl version parse 1.2.3` succeeds
-- [ ] Integration test: `verctl version parse invalid --format json` returns error
+- [ ] Integration test: `verge version parse 1.2.3` succeeds
+- [ ] Integration test: `verge version parse invalid --format json` returns error
 - [ ] Integration test: Help text is available
 
 ## Related Tickets

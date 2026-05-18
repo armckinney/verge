@@ -23,7 +23,7 @@ Implement the `version current` command to fetch the current project version fro
 ## Acceptance Criteria
 
 - [ ] `internal/cli/version_current.go` implements full logic
-- [ ] Command signature: `verctl version current [flags]`
+- [ ] Command signature: `verge version current [flags]`
 - [ ] `--source` flag to override config (git-tags, etc.)
 - [ ] `--ecosystem` flag for output format
 - [ ] `--format` flag (text, json)
@@ -42,14 +42,14 @@ Implement the `version current` command to fetch the current project version fro
 
 ```bash
 # Default: use config, output to text
-$ verctl version current
+$ verge version current
 Version:   1.2.3
 Ecosystem: go
 Source:    git-tags
 Rendered:  v1.2.3
 
 # With explain
-$ verctl version current --explain
+$ verge version current --explain
 Candidates from git-tags:
   v1.2.3 (final)
   v1.2.3-rc.1 (prerelease)
@@ -62,7 +62,7 @@ Source:    git-tags
 Rendered:  v1.2.3
 
 # JSON output
-$ verctl version current --format json
+$ verge version current --format json
 {
   "version": "v1.2.3",
   "normalized": "1.2.3",
@@ -73,7 +73,7 @@ $ verctl version current --format json
 }
 
 # Override source
-$ verctl version current --source git-tags
+$ verge version current --source git-tags
 ```
 
 ### Implementation Pattern
@@ -117,7 +117,7 @@ func runVersionCurrent(cmd *cobra.Command, args []string) error {
 ## Testing
 
 - [ ] Unit test: Fetch version from mock provider
-- [ ] Integration test: `verctl version current` returns correct version
+- [ ] Integration test: `verge version current` returns correct version
 - [ ] Integration test: `--explain` shows candidate list
 - [ ] Integration test: JSON output is valid
 - [ ] Error test: No git tags → exit code 20

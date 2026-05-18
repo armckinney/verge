@@ -30,7 +30,7 @@ Set up cross-platform build infrastructure using goreleaser to produce binaries 
   - `app-linux-arm64` (Linux ARM64)
   - `app-windows-amd64.exe` (Windows x86-64)
   - `app-windows-arm64.exe` (Windows ARM64)
-- [ ] `verctl version -V` works and reports version from build metadata
+- [ ] `verge version -V` works and reports version from build metadata
 - [ ] Build metadata includes Git commit hash and build timestamp
 - [ ] SHA256 checksums generated for all binaries
 - [ ] Local build works: `goreleaser build --single-target`
@@ -51,12 +51,12 @@ Set up cross-platform build infrastructure using goreleaser to produce binaries 
 ```yaml
 version: 2
 
-project_name: verctl
+project_name: verge
 
 builds:
-  - id: verctl
-    main: ./cmd/verctl
-    binary: verctl
+  - id: verge
+    main: ./cmd/verge
+    binary: verge
     env:
       - CGO_ENABLED=0
     goos:

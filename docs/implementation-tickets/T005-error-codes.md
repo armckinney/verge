@@ -39,7 +39,7 @@ Define a consistent error code taxonomy and error handling patterns for the CLI.
 - [ ] `--verbose` flag provides additional context (stack trace, raw API responses)
 - [ ] JSON error output includes error code and message fields
 - [ ] All commands handle errors gracefully without panicking
-- [ ] `verctl -V` and `verctl --version` output format: `verctl version X.Y.Z` (with optional build info when verbose)
+- [ ] `verge -V` and `verge --version` output format: `verge version X.Y.Z` (with optional build info when verbose)
 
 ## Context
 
@@ -83,7 +83,7 @@ type ConfigError struct {
 
 | Code | Meaning | Example |
 |------|---------|---------|
-| 0 | Success | `verctl version current` found version |
+| 0 | Success | `verge version current` found version |
 | 1 | General error | Unexpected panic or error |
 | 2 | Usage error | Missing required flag |
 | 10 | Comparison: left < right | Used in CI gates |
@@ -111,7 +111,7 @@ Retryable: true
 Error: Invalid configuration
 Field: sources.github-releases.owner
 Reason: Required field missing
-Suggestion: Set 'owner' in .verctl.yaml or via --repo-owner flag
+Suggestion: Set 'owner' in .verge.yaml or via --repo-owner flag
 ```
 
 ### JSON Error Output
@@ -141,8 +141,8 @@ Suggestion: Set 'owner' in .verctl.yaml or via --repo-owner flag
 - [ ] Unit test: Each error type formats correctly
 - [ ] Unit test: Exit codes are correct for each error type
 - [ ] Unit test: Error suggestions are clear and actionable
-- [ ] Integration test: `verctl version parse invalid --format json` includes error code
-- [ ] Integration test: `verctl version current` when no git tags exists returns exit code 20
+- [ ] Integration test: `verge version parse invalid --format json` includes error code
+- [ ] Integration test: `verge version current` when no git tags exists returns exit code 20
 
 ## Related Tickets
 

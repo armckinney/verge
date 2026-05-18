@@ -29,7 +29,7 @@ Implement automatic version bump detection from conventional commits history.
 - [ ] Customizable breaking tokens via config
 - [ ] `--auto` flag for `version bump` command
 - [ ] Integration: read git commit history (latest tag → HEAD)
-- [ ] Configuration from `.verctl.yaml`
+- [ ] Configuration from `.verge.yaml`
 - [ ] Handles edge cases (no commits, no tags, etc.)
 
 ## Context

@@ -2,7 +2,7 @@ all: build
 
 build:
 	@echo "Building..."
-	@go build -o verctl ./cmd/verctl
+	@go build -o verge ./cmd/verge
 
 build-snapshot:
 	@echo "Building snapshot..."
@@ -31,6 +31,6 @@ lint:
 
 clean:
 	@echo "Cleaning..."
-	@rm -rf verctl dist/ coverage.out coverage.html
+	@rm -rf verge dist/ coverage.out coverage.html
 
 .PHONY: all build build-snapshot release test coverage fmt lint clean

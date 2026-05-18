@@ -23,10 +23,10 @@ func versionCurrentCmd() *cobra.Command {
 		Long: `Fetch the current (highest) version from the configured version source.
 
 Examples:
-  verctl version current
-  verctl version current --ecosystem python
-  verctl version current --explain
-  verctl version current --format json`,
+  verge version current
+  verge version current --ecosystem python
+  verge version current --explain
+  verge version current --format json`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cfg, err := config.Load(globalFlags.configPath)
 			if err != nil {

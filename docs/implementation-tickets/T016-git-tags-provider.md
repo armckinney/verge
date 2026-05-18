@@ -126,7 +126,7 @@ func (g *gitTagsProvider) parseAndSort(tags []string, opts QueryOptions) []Versi
 
 ### Configuration
 
-From `.verctl.yaml`:
+From `.verge.yaml`:
 
 ```yaml
 sources:

@@ -1,9 +1,9 @@
 version: 2
-project_name: verctl
+project_name: verge
 builds:
-  - id: verctl
-    main: ./cmd/verctl
-    binary: verctl
+  - id: verge
+    main: ./cmd/verge
+    binary: verge
     env:
       - CGO_ENABLED=0
     goos:

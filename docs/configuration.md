@@ -1,15 +1,15 @@
 # Configuration Reference
 
-Full reference for `.verctl.yaml` configuration options.
+Full reference for `.verge.yaml` configuration options.
 
 ---
 
 ## File Location
 
-`verctl` searches for the config file in this order:
+`verge` searches for the config file in this order:
 
 1. Path given by `--config <path>`
-2. `.verctl.yaml` in the current working directory
+2. `.verge.yaml` in the current working directory
 
 If no config file is found, all defaults apply.
 
@@ -190,7 +190,7 @@ All environment variables override the corresponding config file setting at runt
 
 ## Complete Example
 
-A `.verctl.yaml` for a Python project published to GHCR and GitHub Releases:
+A `.verge.yaml` for a Python project published to GHCR and GitHub Releases:
 
 ```yaml
 version: 1

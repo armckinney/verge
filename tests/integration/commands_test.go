@@ -8,12 +8,12 @@ import (
 
 func buildVerctl(t *testing.T) string {
 	t.Helper()
-	cmd := exec.Command("go", "build", "-o", "verctl_test_bin", "./cmd/verctl")
+	cmd := exec.Command("go", "build", "-o", "verge_test_bin", "./cmd/verge")
 	cmd.Dir = "../.."
 	if out, err := cmd.CombinedOutput(); err != nil {
 		t.Skipf("skipping integration test (build failed): %v\n%s", err, out)
 	}
-	return "../../verctl_test_bin"
+	return "../../verge_test_bin"
 }
 
 func TestVersionParse_Integration(t *testing.T) {

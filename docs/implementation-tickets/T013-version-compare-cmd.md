@@ -15,7 +15,7 @@ Implement the `version compare` command to compare two versions for CI/policy ga
 
 ## Target State
 
-- `verctl version compare <version1> <version2>` returns comparison result
+- `verge version compare <version1> <version2>` returns comparison result
 - Exit codes are machine-friendly for CI integration
 - Text and JSON output modes supported
 - Output includes human-readable and machine-readable comparison
@@ -23,7 +23,7 @@ Implement the `version compare` command to compare two versions for CI/policy ga
 ## Acceptance Criteria
 
 - [ ] `internal/cli/version_compare.go` implements full logic
-- [ ] Command signature: `verctl version compare <version1> <version2> [flags]`
+- [ ] Command signature: `verge version compare <version1> <version2> [flags]`
 - [ ] `--format` flag with choices: text, json
 - [ ] Exit codes:
   - `0` if equal
@@ -44,25 +44,25 @@ Implement the `version compare` command to compare two versions for CI/policy ga
 
 ```bash
 # Equal versions
-$ verctl version compare 1.2.3 1.2.3
+$ verge version compare 1.2.3 1.2.3
 Comparison: 1.2.3 == 1.2.3
 $ echo $?
 0
 
 # Left < Right
-$ verctl version compare 1.2.3 1.2.4
+$ verge version compare 1.2.3 1.2.4
 Comparison: 1.2.3 < 1.2.4
 $ echo $?
 10
 
 # Left > Right
-$ verctl version compare 1.2.4 1.2.3
+$ verge version compare 1.2.4 1.2.3
 Comparison: 1.2.4 > 1.2.3
 $ echo $?
 11
 
 # JSON output
-$ verctl version compare 1.2.3 1.2.4 --format json
+$ verge version compare 1.2.3 1.2.4 --format json
 {
   "left": {
     "version": "1.2.3",
@@ -124,9 +124,9 @@ Use cases for CI/CD:
 
 ```bash
 # Check if update is available
-NEW_VERSION=$(verctl version latest)
-CURRENT_VERSION=$(verctl version current)
-if verctl version compare "$CURRENT_VERSION" "$NEW_VERSION" > /dev/null 2>&1; then
+NEW_VERSION=$(verge version latest)
+CURRENT_VERSION=$(verge version current)
+if verge version compare "$CURRENT_VERSION" "$NEW_VERSION" > /dev/null 2>&1; then
     # Versions are equal
     echo "Already at latest"
 else
@@ -136,7 +136,7 @@ else
 fi
 
 # Validate release version
-if verctl version compare "$RELEASE_VERSION" "$PREVIOUS_VERSION"; then
+if verge version compare "$RELEASE_VERSION" "$PREVIOUS_VERSION"; then
     echo "Release version must be higher than previous"
     exit 1
 fi
@@ -149,7 +149,7 @@ fi
 - [ ] Unit test: Left > Right returns exit code 11
 - [ ] Unit test: Invalid versions return error
 - [ ] Unit test: JSON output is valid and includes exit code
-- [ ] Integration test: `verctl version compare 1.2.3 1.2.4 && echo "equal"` works
+- [ ] Integration test: `verge version compare 1.2.3 1.2.4 && echo "equal"` works
 - [ ] Integration test: Exit codes are correct for CI scripts
 
 ## Related Tickets

@@ -16,10 +16,10 @@ func versionParseCmd() *cobra.Command {
 		Long: `Parse and validate a version string, displaying its components and rendered forms.
 
 Examples:
-  verctl version parse 1.2.3
-  verctl version parse v1.2.3-rc.2
-  verctl version parse 1.2.3dev4
-  verctl version parse 1.2.3 --format json`,
+  verge version parse 1.2.3
+  verge version parse v1.2.3-rc.2
+  verge version parse 1.2.3dev4
+  verge version parse 1.2.3 --format json`,
 		Args: cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			parser := version.NewParser()

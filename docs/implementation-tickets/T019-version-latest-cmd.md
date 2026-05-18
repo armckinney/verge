@@ -23,7 +23,7 @@ Implement the `version latest` command to fetch the latest available version wit
 ## Acceptance Criteria
 
 - [ ] `internal/cli/version_latest.go` implements full logic
-- [ ] Command signature: `verctl version latest [flags]`
+- [ ] Command signature: `verge version latest [flags]`
 - [ ] `--source` flag (git-tags, etc.)
 - [ ] `--constraint` flag for version ranges (v1, future enhancement)
 - [ ] `--core` flag to filter by core version (e.g., `1.2.3`)
@@ -43,17 +43,17 @@ Implement the `version latest` command to fetch the latest available version wit
 
 ```bash
 # Highest version
-$ verctl version latest
+$ verge version latest
 Version:   2.0.0
 Source:    git-tags
 
 # Latest of specific core
-$ verctl version latest --core 1.2.3 --stage dev
+$ verge version latest --core 1.2.3 --stage dev
 Version:   1.2.3-dev.5
 Source:    git-tags
 
 # With explain
-$ verctl version latest --explain
+$ verge version latest --explain
 Candidates from git-tags:
   v2.0.0 (final)
   v1.2.3 (final)
@@ -69,7 +69,7 @@ Source:    git-tags
 ## Testing
 
 - [ ] Unit test: Get latest from mock provider
-- [ ] Integration test: `verctl version latest` returns highest
+- [ ] Integration test: `verge version latest` returns highest
 - [ ] Integration test: `--core 1.2.3 --stage dev` filters correctly
 - [ ] Integration test: `--explain` shows candidates
 - [ ] Error test: No matching versions

@@ -130,8 +130,8 @@ Result:         left < right
 - [ ] Unit test: Text formatter produces readable output
 - [ ] Unit test: JSON formatter produces valid JSON
 - [ ] Unit test: JSON can be unmarshalled back to struct
-- [ ] Integration test: `verctl version parse 1.2.3 --format json | jq .version` works
-- [ ] Integration test: `verctl version parse 1.2.3 --format text` produces human-friendly output
+- [ ] Integration test: `verge version parse 1.2.3 --format json | jq .version` works
+- [ ] Integration test: `verge version parse 1.2.3 --format text` produces human-friendly output
 - [ ] Golden test: Compare output against known good examples
 
 ## Related Tickets

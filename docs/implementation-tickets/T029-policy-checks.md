@@ -26,7 +26,7 @@ Implement lightweight policy checks for release validation (optional, can be min
 - [ ] Validate version >= previous version (for releases)
 - [ ] Optional: enforce specific stage on branches (main=final only, develop=any)
 - [ ] Fail fast with clear error messages
-- [ ] Configuration via `.verctl.yaml` (optional)
+- [ ] Configuration via `.verge.yaml` (optional)
 - [ ] Integration: `version bump` can validate result against policy
 - [ ] All checks are optional (can be disabled)
 

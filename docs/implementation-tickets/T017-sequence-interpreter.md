@@ -89,7 +89,7 @@ func isHex(s string) bool {
 
 ### Configuration
 
-From `.verctl.yaml`:
+From `.verge.yaml`:
 
 ```yaml
 sequence:

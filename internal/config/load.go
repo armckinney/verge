@@ -14,7 +14,7 @@ func Load(configPath string) (*Config, error) {
 		configPath = os.Getenv("VERCTL_CONFIG")
 	}
 	if configPath == "" {
-		configPath = ".verctl.yaml"
+		configPath = ".verge.yaml"
 	}
 
 	data, err := os.ReadFile(configPath)

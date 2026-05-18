@@ -26,9 +26,9 @@ func SetVersionInfo(version, commit, date string) {
 }
 
 var rootCmd = &cobra.Command{
-	Use:   "verctl",
+	Use:   "verge",
 	Short: "A semantic versioning CLI tool",
-	Long:  `verctl is a semantic versioning CLI tool for managing and bumping versions across ecosystems.`,
+	Long:  `verge is a semantic versioning CLI tool for managing and bumping versions across ecosystems.`,
 }
 
 // Execute runs the root command.
@@ -38,7 +38,7 @@ func Execute() error {
 
 func init() {
 	rootCmd.PersistentFlags().BoolVarP(&globalFlags.verbose, "verbose", "v", false, "Enable verbose output")
-	rootCmd.PersistentFlags().StringVarP(&globalFlags.configPath, "config", "c", "", "Config file path (default: .verctl.yaml)")
+	rootCmd.PersistentFlags().StringVarP(&globalFlags.configPath, "config", "c", "", "Config file path (default: .verge.yaml)")
 	rootCmd.PersistentFlags().StringVarP(&globalFlags.format, "format", "f", "text", "Output format: text or json")
 
 	rootCmd.AddCommand(versionCmd())

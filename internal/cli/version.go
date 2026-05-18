@@ -24,7 +24,7 @@ func versionCmd() *cobra.Command {
 func versionInfoCmd() *cobra.Command {
 	return &cobra.Command{
 		Use:   "info",
-		Short: "Show verctl version info",
+		Short: "Show verge version info",
 		Run: func(cmd *cobra.Command, args []string) {
 			out := NewOutput(OutputFormat(globalFlags.format))
 			out.Print(map[string]interface{}{

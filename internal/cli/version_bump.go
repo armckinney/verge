@@ -26,11 +26,11 @@ func versionBumpCmd() *cobra.Command {
 Kinds: major, minor, patch, prerelease, final
 
 Examples:
-  verctl version bump --from 1.2.3 --kind minor
-  verctl version bump --from 1.2.3 --kind prerelease --stage dev
-  verctl version bump --from 1.2.3-rc.1 --kind final
-  verctl version bump --from 1.2.3 --auto
-  verctl version bump --from 1.2.3 --kind minor --changelog --format json`,
+  verge version bump --from 1.2.3 --kind minor
+  verge version bump --from 1.2.3 --kind prerelease --stage dev
+  verge version bump --from 1.2.3-rc.1 --kind final
+  verge version bump --from 1.2.3 --auto
+  verge version bump --from 1.2.3 --kind minor --changelog --format json`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if fromVersion == "" {
 				return fmt.Errorf("--from flag is required")

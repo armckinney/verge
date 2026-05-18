@@ -29,9 +29,9 @@ The implementation is organized into **4 phases** with incrementally increasing 
 **Key tickets**: T001–T005, T031 (build system)
 
 **Exit criteria**:
-- `verctl version` displays help
-- `verctl version parse --help` shows available options
-- `.verctl.yaml` loads without errors
+- `verge version` displays help
+- `verge version parse --help` shows available options
+- `.verge.yaml` loads without errors
 - JSON and text output modes work for all commands
 - Build system is set up and can produce binaries for all 5 target platforms (darwin-arm64, linux-amd64, linux-arm64, windows-amd64, windows-arm64)
 
@@ -89,9 +89,9 @@ The implementation is organized into **4 phases** with incrementally increasing 
 **Dependencies**: Phase 1 completed
 
 **Exit criteria**:
-- `verctl version current --source git-tags` returns correct version
-- `verctl version latest --source git-tags --explain` shows candidate filtering
-- `verctl version bump --from 1.2.3 --kind minor` computes correct bump
+- `verge version current --source git-tags` returns correct version
+- `verge version latest --source git-tags --explain` shows candidate filtering
+- `verge version bump --from 1.2.3 --kind minor` computes correct bump
 - All git-tag real-world test cases pass
 - Provider contract tests pass
 
@@ -117,8 +117,8 @@ The implementation is organized into **4 phases** with incrementally increasing 
 **Dependencies**: Phase 2 completed
 
 **Exit criteria**:
-- `verctl version latest --source github-releases` returns correct version
-- `verctl version latest --source ghcr` returns correct container tag
+- `verge version latest --source github-releases` returns correct version
+- `verge version latest --source ghcr` returns correct container tag
 - Caching reduces redundant API calls
 - Rate-limit errors are handled gracefully
 - Multi-source conflict resolution works (precedence order respected)
@@ -142,7 +142,7 @@ The implementation is organized into **4 phases** with incrementally increasing 
 **Dependencies**: Phase 3 completed
 
 **Exit criteria**:
-- `verctl version bump --auto` reads commit history and suggests correct bump
+- `verge version bump --auto` reads commit history and suggests correct bump
 - Policy checks (if implemented) validate version against branch rules
 - JSON output includes changelog metadata
 - Real-world repo workflows pass
@@ -239,8 +239,8 @@ The CLI is built and distributed for 5 platforms:
 
 ### Version Information
 
-- CLI reports version via `verctl -V` or `verctl --version`
-- Output format: `verctl version X.Y.Z`
+- CLI reports version via `verge -V` or `verge --version`
+- Output format: `verge version X.Y.Z`
 - Build metadata (Git commit, timestamp) embedded and visible with `--verbose`
 - Version matches git tag for reproducibility
 

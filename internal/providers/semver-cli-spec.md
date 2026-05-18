@@ -38,7 +38,7 @@ Keep in v1:
 
 - One canonical internal version model and deterministic comparison.
 - Core commands: `version current`, `version bump`, `version latest`, `version parse`, `version compare`.
-- One config format (`.verctl.yaml`) with simple overrides.
+- One config format (`.verge.yaml`) with simple overrides.
 - Provider set limited to practical sources (`git-tags`, then optional `github-releases`, then optional `ghcr`).
 - Strong parser/comparator/bump tests and predictable JSON output.
 - Explain mode (`--explain`) to show why a version was selected.
@@ -162,7 +162,7 @@ For ordering purposes:
 
 ## 4. CLI Command Surface (v1)
 
-Use a root command like `verctl` (placeholder name).
+Use a root command like `verge` (placeholder name).
 
 ### 4.1 `version current`
 
@@ -171,11 +171,11 @@ Purpose: get current project version.
 Examples:
 
 ```bash
-verctl version current
-verctl version current --source git-tags
-verctl version current --format json
-verctl version current --ecosystem go
-verctl version current --ecosystem containers
+verge version current
+verge version current --source git-tags
+verge version current --format json
+verge version current --ecosystem go
+verge version current --ecosystem containers
 ```
 
 Behavior:
@@ -202,9 +202,9 @@ Purpose: determine bump kind and/or generate next version.
 Examples:
 
 ```bash
-verctl version bump --from 1.2.3 --kind minor
-verctl version bump --from 1.2.3-dev.4 --kind prerelease --stage dev
-verctl version bump --from 1.2.3rc2 --kind final
+verge version bump --from 1.2.3 --kind minor
+verge version bump --from 1.2.3-dev.4 --kind prerelease --stage dev
+verge version bump --from 1.2.3rc2 --kind final
 ```
 
 Supported bump kinds (v1):
@@ -229,12 +229,12 @@ Purpose: fetch latest available version from one or more sources.
 Examples:
 
 ```bash
-verctl version latest
-verctl version latest --source github-releases
-verctl version latest --constraint "^1.2.3"
-verctl version latest --core 1.2.3 --stage dev
-verctl version latest --ecosystem python
-verctl version latest --ecosystem containers --channel rel
+verge version latest
+verge version latest --source github-releases
+verge version latest --constraint "^1.2.3"
+verge version latest --core 1.2.3 --stage dev
+verge version latest --ecosystem python
+verge version latest --ecosystem containers --channel rel
 ```
 
 Behavior:
@@ -253,7 +253,7 @@ Purpose: validate and normalize a version string.
 Example:
 
 ```bash
-verctl version parse 1.2.3rc1 --output semver
+verge version parse 1.2.3rc1 --output semver
 ```
 
 ### 4.5 `version compare` (recommended)
@@ -263,7 +263,7 @@ Purpose: compare two versions for CI/policy gates.
 Example:
 
 ```bash
-verctl version compare 1.2.3 1.2.4
+verge version compare 1.2.3 1.2.4
 ```
 
 Result:
@@ -308,7 +308,7 @@ Recommended initial providers:
 
 ### 6.1 Format recommendation
 
-Use YAML for initial CLI adoption (`.verctl.yaml`) because it is common in CI and already present in the Go ecosystem. TOML support can be added later.
+Use YAML for initial CLI adoption (`.verge.yaml`) because it is common in CI and already present in the Go ecosystem. TOML support can be added later.
 
 ### 6.2 Example config
 
@@ -422,7 +422,7 @@ autoBump:
 Suggested structure after migration toward CLI:
 
 ```text
-cmd/verctl/main.go
+cmd/verge/main.go
 internal/cli/
   root.go
   version_current.go
@@ -582,7 +582,7 @@ The CLI shall be built and distributed for the following platforms:
 - Use `goreleaser` for automated multi-platform builds.
 - Builds are triggered on git tags (e.g., `v1.0.0`).
 - Artifacts are stored with platform and architecture in filename:
-  - Format: `verctl-<version>-<platform>-<arch>` or `.exe` suffix for Windows.
+  - Format: `verge-<version>-<platform>-<arch>` or `.exe` suffix for Windows.
 - Support reproducible builds (same source = same binary hash).
 
 ### 15.3 Distribution Channels
@@ -593,7 +593,7 @@ The CLI shall be built and distributed for the following platforms:
 - Sign binaries (optional for v1, recommended for v2).
 
 **Package Managers** (future)
-- Homebrew (macOS) — `brew install verctl`
+- Homebrew (macOS) — `brew install verge`
 - Apt/Snap (Linux) — defer to v2
 - Chocolatey (Windows) — defer to v2
 
@@ -611,7 +611,7 @@ The CLI shall be built and distributed for the following platforms:
 ### 15.5 Version Information
 
 - CLI shall report version with `-V` or `--version` flag.
-- Output format: `verctl version X.Y.Z` (can be parsed by downstream tools).
+- Output format: `verge version X.Y.Z` (can be parsed by downstream tools).
 - Build metadata (Git commit, build timestamp) can be embedded in binary for debugging.
 
 ## 16. Open Questions

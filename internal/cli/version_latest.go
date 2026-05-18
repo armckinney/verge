@@ -27,11 +27,11 @@ func versionLatestCmd() *cobra.Command {
 Supports filtering by core version and prerelease stage.
 
 Examples:
-  verctl version latest
-  verctl version latest --stage rc
-  verctl version latest --core 1.2.3 --stage dev
-  verctl version latest --explain
-  verctl version latest --format json`,
+  verge version latest
+  verge version latest --stage rc
+  verge version latest --core 1.2.3 --stage dev
+  verge version latest --explain
+  verge version latest --format json`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cfg, err := config.Load(globalFlags.configPath)
 			if err != nil {

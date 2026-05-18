@@ -15,17 +15,17 @@ Establish the Cobra command structure for the CLI with root command and subcomma
 
 ## Target State
 
-- Root command `verctl` with help text
-- `verctl version` subcommand (top-level category)
-- `verctl version parse`, `verctl version compare`, `verctl version current`, `verctl version latest`, `verctl version bump` subcommands
+- Root command `verge` with help text
+- `verge version` subcommand (top-level category)
+- `verge version parse`, `verge version compare`, `verge version current`, `verge version latest`, `verge version bump` subcommands
 - All commands use consistent flag patterns (--format, --ecosystem, --explain, etc.)
 - Help text is clear and includes ecosystem examples
 
 ## Acceptance Criteria
 
-- [ ] `verctl --help` displays all subcommands
-- [ ] `verctl version --help` displays all version subcommands
-- [ ] `verctl version parse --help` shows relevant flags (--output, --ecosystem)
+- [ ] `verge --help` displays all subcommands
+- [ ] `verge version --help` displays all version subcommands
+- [ ] `verge version parse --help` shows relevant flags (--output, --ecosystem)
 - [ ] Each command has a `Short` and `Long` description in Cobra
 - [ ] `--verbose` flag is available on root and propagates to subcommands
 - [ ] `--ecosystem` flag is available on commands that support it
@@ -48,12 +48,12 @@ Establish the Cobra command structure for the CLI with root command and subcomma
 
 ### Files to Update
 
-- `cmd/verctl/main.go` — call `cli.Execute(rootCmd)` from Cobra root
+- `cmd/verge/main.go` — call `cli.Execute(rootCmd)` from Cobra root
 
 ### Command Flag Design
 
 ```
-verctl [--verbose] version
+verge [--verbose] version
   parse <version> [--output semver|pep440|auto] [--ecosystem go|python|containers|...]
   compare <version1> <version2> [--format text|json]
   current [--source git-tags|github-releases|ghcr] [--ecosystem ...] [--format text|json] [--explain]
@@ -72,8 +72,8 @@ verctl [--verbose] version
 ## Testing
 
 - [ ] Unit test: Cobra command tree can be parsed
-- [ ] Integration test: `verctl version parse 1.2.3 --format json` executes (stub output)
-- [ ] Integration test: `verctl version compare 1.2.3 1.2.4` executes (stub output)
+- [ ] Integration test: `verge version parse 1.2.3 --format json` executes (stub output)
+- [ ] Integration test: `verge version compare 1.2.3 1.2.4` executes (stub output)
 - [ ] Integration test: All commands return exit code 0 (for now; actual logic in Phase 1+)
 
 ## Related Tickets
@@ -92,4 +92,4 @@ verctl [--verbose] version
 
 - Use `cobra.Command.PreRunE` to load config and validate flags
 - Keep each subcommand in a separate file for maintainability
-- Add contextual help examples for each command (e.g., `verctl version parse v1.2.3-rc.1`)
+- Add contextual help examples for each command (e.g., `verge version parse v1.2.3-rc.1`)

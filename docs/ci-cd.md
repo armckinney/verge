@@ -35,7 +35,7 @@ jobs:
 
       - name: Install verge
         run: |
-          curl -sSL https://github.com/armckinney/template-go/releases/latest/download/verge-linux-amd64 \
+          curl -sSL https://github.com/armckinney/verge/releases/latest/download/verge-linux-amd64 \
             -o /usr/local/bin/verge
           chmod +x /usr/local/bin/verge
 

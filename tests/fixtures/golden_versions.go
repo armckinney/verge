@@ -1,6 +1,6 @@
 package fixtures
 
-import "example.com/template-go/internal/version"
+import "example.com/verge/internal/version"
 
 // GoldenVersion is a test fixture for version parsing.
 type GoldenVersion struct {

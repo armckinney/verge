@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"example.com/template-go/internal/providers"
+	"example.com/verge/internal/providers"
 )
 
 // TestMemoryCache_GetSet verifies basic set/get behavior.

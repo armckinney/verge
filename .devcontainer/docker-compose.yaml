@@ -4,7 +4,7 @@ services:
       dockerfile: .devcontainer/Dockerfile
       context: ..
     volumes:
-      - ..:/workspaces/template-go:cached
+      - ..:/workspaces/verge:cached
       - ~/.gitconfig:/root/.gitconfig:ro
       # ai tool persistence
       - ~/.gemini:/root/.gemini:rw

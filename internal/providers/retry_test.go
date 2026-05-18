@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"testing"
 
-	"example.com/template-go/internal/providers"
+	"example.com/verge/internal/providers"
 )
 
 func TestRetryPolicy_SuccessOnFirstAttempt(t *testing.T) {

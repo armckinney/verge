@@ -3,7 +3,7 @@ package sequence
 import (
 	"strings"
 
-	"example.com/template-go/internal/version"
+	"example.com/verge/internal/version"
 )
 
 // Detect detects the sequence type for a given string.

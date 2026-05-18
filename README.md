@@ -62,4 +62,4 @@ This is a template for a Go API project. It follows a standard directory structu
 - [pgx](https://github.com/jackc/pgx) for PostgreSQL driver.
 - [godotenv](https://github.com/joho/godotenv) for environment variable management.
 
-# template-go
+# verge

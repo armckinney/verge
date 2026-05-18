@@ -3,7 +3,7 @@ package cli
 import (
 	"fmt"
 
-	"example.com/template-go/internal/version"
+	"example.com/verge/internal/version"
 	"github.com/spf13/cobra"
 )
 

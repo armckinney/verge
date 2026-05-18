@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"example.com/template-go/internal/providers"
+	"example.com/verge/internal/providers"
 )
 
 // TestMultiProviderChain_GitTagsTakesPrecedence verifies that when multiple

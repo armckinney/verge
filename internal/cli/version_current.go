@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"sort"
 
-	"example.com/template-go/internal/config"
-	"example.com/template-go/internal/providers"
-	"example.com/template-go/internal/version"
+	"example.com/verge/internal/config"
+	"example.com/verge/internal/providers"
+	"example.com/verge/internal/version"
 	"github.com/spf13/cobra"
 )
 

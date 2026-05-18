@@ -1,7 +1,7 @@
 package version
 
 import (
-	"example.com/template-go/internal/ecosystems"
+	"example.com/verge/internal/ecosystems"
 )
 
 type defaultRenderer struct {

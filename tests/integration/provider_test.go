@@ -3,7 +3,7 @@ package integration_test
 import (
 	"testing"
 
-	"example.com/template-go/internal/providers"
+	"example.com/verge/internal/providers"
 )
 
 func TestGitTagsProvider(t *testing.T) {

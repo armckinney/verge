@@ -1,4 +1,4 @@
-module example.com/template-go
+module example.com/verge
 
 go 1.25
 

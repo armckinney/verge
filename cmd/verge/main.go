@@ -1,7 +1,7 @@
 package main
 
 import (
-	"example.com/template-go/internal/cli"
+	"example.com/verge/internal/cli"
 	"os"
 )
 

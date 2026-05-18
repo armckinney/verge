@@ -1,6 +1,6 @@
 package providers
 
-import "example.com/template-go/internal/version"
+import "example.com/verge/internal/version"
 
 // QueryOptions controls how versions are fetched.
 type QueryOptions struct {

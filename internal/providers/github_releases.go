@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"example.com/template-go/internal/version"
+	"example.com/verge/internal/version"
 )
 
 const githubAPIBase = "https://api.github.com"

@@ -3,7 +3,7 @@ package version_test
 import (
 	"testing"
 
-	"example.com/template-go/internal/version"
+	"example.com/verge/internal/version"
 )
 
 func TestCommitParser_Feat(t *testing.T) {

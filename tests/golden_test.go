@@ -4,8 +4,8 @@ import (
 	"testing"
 	"time"
 
-	"example.com/template-go/internal/version"
-	"example.com/template-go/tests/fixtures"
+	"example.com/verge/internal/version"
+	"example.com/verge/tests/fixtures"
 )
 
 // TestGoldenCorpus_Parse verifies all real-world versions parse without error.

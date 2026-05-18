@@ -1,10 +1,10 @@
 {
-	"name": "template-go",
+	"name": "verge",
 	"dockerComposeFile": [
 		"docker-compose.yaml"
 	],
 	"service": "devcontainer",
-	"workspaceFolder": "/workspaces/template-go",
+	"workspaceFolder": "/workspaces/verge",
 	"postCreateCommand": "cd $WORKSPACE",
 	"customizations": {
 		"vscode": {

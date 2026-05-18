@@ -30,20 +30,20 @@
 ### From source
 
 ```bash
-git clone https://github.com/armckinney/template-go
-cd template-go
+git clone https://github.com/armckinney/verge
+cd verge
 make build          # produces ./verge
 ```
 
 ### Using Go install
 
 ```bash
-go install example.com/template-go/cmd/verge@latest
+go install example.com/verge/cmd/verge@latest
 ```
 
 ### Pre-built releases
 
-Download from the [releases page](https://github.com/armckinney/template-go/releases). Binaries are available for:
+Download from the [releases page](https://github.com/armckinney/verge/releases). Binaries are available for:
 
 | Platform       | Binary                         |
 |----------------|--------------------------------|

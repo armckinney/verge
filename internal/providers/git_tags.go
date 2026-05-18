@@ -4,7 +4,7 @@ import (
 	"os/exec"
 	"strings"
 
-	"example.com/template-go/internal/version"
+	"example.com/verge/internal/version"
 )
 
 type GitTagsProvider struct{}

@@ -6,6 +6,11 @@
 	"service": "devcontainer",
 	"workspaceFolder": "/workspaces/verge",
 	"postCreateCommand": "cd $WORKSPACE",
+	"features": {
+    "https://github.com/armckinney/containers/releases/download/v1.0.5/devcontainer-feature-gemini.tgz": {},
+    "https://github.com/armckinney/containers/releases/download/v1.0.5/devcontainer-feature-copilot.tgz": {},
+    "https://github.com/armckinney/containers/releases/download/v1.0.5/devcontainer-feature-vscode-customizations.tgz": {}
+	},
 	"customizations": {
 		"vscode": {
 			"settings": {

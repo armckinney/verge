@@ -1,10 +1,24 @@
-# Build the application
 all: build
+
+build:
+	@echo "Building..."
+	@go build -o verctl ./cmd/verctl
+
+build-snapshot:
+	@echo "Building snapshot..."
+	@goreleaser build --single-target --snapshot --clean
+
+release:
+	@goreleaser release --clean
 
 test:
 	@echo "Testing..."
-	@./tests/db/setup.sh
 	@go test ./... -v
+
+coverage:
+	@echo "Running coverage..."
+	@go test ./... -coverprofile=coverage.out
+	@go tool cover -func=coverage.out
 
 fmt:
 	@echo "Formatting..."
@@ -15,19 +29,8 @@ lint:
 	@gofmt -l .
 	@go vet ./...
 
-build:
-	@echo "Building..."
-	@go build -o main cmd/api/main.go
-
 clean:
 	@echo "Cleaning..."
-	@rm -rf main tmp
+	@rm -rf verctl dist/ coverage.out coverage.html
 
-run:
-	@go run cmd/api/main.go
-
-watch:
-	@echo "Access app on http://localhost:8080"
-	@go tool air
-
-.PHONY: all build run test clean watch
+.PHONY: all build build-snapshot release test coverage fmt lint clean

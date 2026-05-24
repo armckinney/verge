@@ -7,7 +7,7 @@
 
 ## Objective
 
-Establish the Cobra command structure for the CLI with root command and subcommands for the version domain.
+Establish the Cobra command structure for the CLI with root command and top-level version operations.
 
 ## Current State
 
@@ -16,16 +16,14 @@ Establish the Cobra command structure for the CLI with root command and subcomma
 ## Target State
 
 - Root command `verge` with help text
-- `verge version` subcommand (top-level category)
-- `verge version parse`, `verge version compare`, `verge version current`, `verge version latest`, `verge version bump` subcommands
+- `verge parse`, `verge compare`, `verge current`, `verge latest`, `verge bump` subcommands
 - All commands use consistent flag patterns (--format, --ecosystem, --explain, etc.)
 - Help text is clear and includes ecosystem examples
 
 ## Acceptance Criteria
 
 - [ ] `verge --help` displays all subcommands
-- [ ] `verge version --help` displays all version subcommands
-- [ ] `verge version parse --help` shows relevant flags (--output, --ecosystem)
+- [ ] `verge parse --help` shows relevant flags (--output, --ecosystem)
 - [ ] Each command has a `Short` and `Long` description in Cobra
 - [ ] `--verbose` flag is available on root and propagates to subcommands
 - [ ] `--ecosystem` flag is available on commands that support it
@@ -39,7 +37,7 @@ Establish the Cobra command structure for the CLI with root command and subcomma
 ### Files to Create
 
 - `internal/cli/root.go` — root command definition
-- `internal/cli/version.go` — version command group
+- `internal/cli/version.go` — info command
 - `internal/cli/version_parse.go` — parse subcommand
 - `internal/cli/version_compare.go` — compare subcommand
 - `internal/cli/version_current.go` — current subcommand (stub for now)
@@ -53,7 +51,7 @@ Establish the Cobra command structure for the CLI with root command and subcomma
 ### Command Flag Design
 
 ```
-verge [--verbose] version
+verge [--verbose]
   parse <version> [--output semver|pep440|auto] [--ecosystem go|python|containers|...]
   compare <version1> <version2> [--format text|json]
   current [--source git-tags|github-releases|ghcr] [--ecosystem ...] [--format text|json] [--explain]
@@ -72,8 +70,8 @@ verge [--verbose] version
 ## Testing
 
 - [ ] Unit test: Cobra command tree can be parsed
-- [ ] Integration test: `verge version parse 1.2.3 --format json` executes (stub output)
-- [ ] Integration test: `verge version compare 1.2.3 1.2.4` executes (stub output)
+- [ ] Integration test: `verge parse 1.2.3 --format json` executes (stub output)
+- [ ] Integration test: `verge compare 1.2.3 1.2.4` executes (stub output)
 - [ ] Integration test: All commands return exit code 0 (for now; actual logic in Phase 1+)
 
 ## Related Tickets
@@ -92,4 +90,4 @@ verge [--verbose] version
 
 - Use `cobra.Command.PreRunE` to load config and validate flags
 - Keep each subcommand in a separate file for maintainability
-- Add contextual help examples for each command (e.g., `verge version parse v1.2.3-rc.1`)
+- Add contextual help examples for each command (e.g., `verge parse v1.2.3-rc.1`)

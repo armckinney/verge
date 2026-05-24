@@ -15,6 +15,7 @@ var (
 		verbose    bool
 		configPath string
 		format     string
+		field      string
 	}
 )
 
@@ -40,6 +41,14 @@ func init() {
 	rootCmd.PersistentFlags().BoolVarP(&globalFlags.verbose, "verbose", "v", false, "Enable verbose output")
 	rootCmd.PersistentFlags().StringVarP(&globalFlags.configPath, "config", "c", "", "Config file path (default: .verge.yaml)")
 	rootCmd.PersistentFlags().StringVarP(&globalFlags.format, "format", "f", "text", "Output format: text or json")
+	rootCmd.PersistentFlags().StringVar(&globalFlags.field, "field", "", "Print a single top-level field from structured command output")
 
-	rootCmd.AddCommand(versionCmd())
+	rootCmd.AddCommand(
+		versionParseCmd(),
+		versionCompareCmd(),
+		versionCurrentCmd(),
+		versionLatestCmd(),
+		versionBumpCmd(),
+		versionInfoCmd(),
+	)
 }

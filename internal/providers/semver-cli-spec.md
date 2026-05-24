@@ -171,11 +171,11 @@ Purpose: get current project version.
 Examples:
 
 ```bash
-verge version current
-verge version current --source git-tags
-verge version current --format json
-verge version current --ecosystem go
-verge version current --ecosystem containers
+verge current
+verge current --source git-tags
+verge current --format json
+verge current --ecosystem go
+verge current --ecosystem containers
 ```
 
 Behavior:
@@ -202,9 +202,9 @@ Purpose: determine bump kind and/or generate next version.
 Examples:
 
 ```bash
-verge version bump --from 1.2.3 --kind minor
-verge version bump --from 1.2.3-dev.4 --kind prerelease --stage dev
-verge version bump --from 1.2.3rc2 --kind final
+verge bump --from 1.2.3 --kind minor
+verge bump --from 1.2.3-dev.4 --kind prerelease --stage dev
+verge bump --from 1.2.3rc2 --kind final
 ```
 
 Supported bump kinds (v1):
@@ -229,12 +229,12 @@ Purpose: fetch latest available version from one or more sources.
 Examples:
 
 ```bash
-verge version latest
-verge version latest --source github-releases
-verge version latest --constraint "^1.2.3"
-verge version latest --core 1.2.3 --stage dev
-verge version latest --ecosystem python
-verge version latest --ecosystem containers --channel rel
+verge latest
+verge latest --source github-releases
+verge latest --constraint "^1.2.3"
+verge latest --core 1.2.3 --stage dev
+verge latest --ecosystem python
+verge latest --ecosystem containers --channel rel
 ```
 
 Behavior:
@@ -253,7 +253,7 @@ Purpose: validate and normalize a version string.
 Example:
 
 ```bash
-verge version parse 1.2.3rc1 --output semver
+verge parse 1.2.3rc1 --output semver
 ```
 
 ### 4.5 `version compare` (recommended)
@@ -263,7 +263,7 @@ Purpose: compare two versions for CI/policy gates.
 Example:
 
 ```bash
-verge version compare 1.2.3 1.2.4
+verge compare 1.2.3 1.2.4
 ```
 
 Result:
@@ -610,8 +610,8 @@ The CLI shall be built and distributed for the following platforms:
 
 ### 15.5 Version Information
 
-- CLI shall report version with `-V` or `--version` flag.
-- Output format: `verge version X.Y.Z` (can be parsed by downstream tools).
+- CLI shall report build metadata with `verge info`.
+- Output includes version, commit, and date fields for downstream tools.
 - Build metadata (Git commit, build timestamp) can be embedded in binary for debugging.
 
 ## 16. Open Questions

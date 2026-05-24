@@ -72,7 +72,7 @@ Implement enhanced JSON output for changelog and release note generation.
 
 ```bash
 # Generate changelog data
-$ verge version bump --from 1.2.3 --kind minor --changelog --format json > changelog.json
+$ verge bump --from 1.2.3 --kind minor --changelog --format json > changelog.json
 
 # Use with changelog tools
 $ conventional-changelog -i CHANGELOG.md < changelog.json

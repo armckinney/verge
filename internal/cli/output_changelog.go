@@ -36,7 +36,7 @@ type ChangelogOutput struct {
 }
 
 // PrintChangelog writes structured changelog JSON to w (defaults to stdout).
-func PrintChangelog(w io.Writer, from, to, bumpType, source string, commits []ChangelogCommit) error {
+func PrintChangelog(w io.Writer, field, from, to, bumpType, source string, commits []ChangelogCommit) error {
 	if w == nil {
 		w = os.Stdout
 	}
@@ -52,6 +52,18 @@ func PrintChangelog(w io.Writer, from, to, bumpType, source string, commits []Ch
 			Commits:   commits,
 		},
 	}
+	if field != "" {
+		data := map[string]interface{}{
+			"version":  out.Version,
+			"metadata": out.Metadata,
+		}
+		value, ok := data[field]
+		if !ok {
+			return fmt.Errorf("unknown field %q", field)
+		}
+		return writeSelected(w, value)
+	}
+
 	enc := json.NewEncoder(w)
 	enc.SetIndent("", "  ")
 	if err := enc.Encode(out); err != nil {

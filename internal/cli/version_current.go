@@ -23,10 +23,11 @@ func versionCurrentCmd() *cobra.Command {
 		Long: `Fetch the current (highest) version from the configured version source.
 
 Examples:
-  verge version current
-  verge version current --ecosystem python
-  verge version current --explain
-  verge version current --format json`,
+	verge current
+	verge current --ecosystem python
+	verge current --field normalized
+	verge current --explain
+	verge current --format json`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cfg, err := config.Load(globalFlags.configPath)
 			if err != nil {
@@ -72,6 +73,7 @@ Examples:
 			rendered := version.NewRenderer(ecosystem).Render(v)
 
 			out := NewOutput(OutputFormat(globalFlags.format))
+			out.Field = globalFlags.field
 			data := map[string]interface{}{
 				"version":    results[0].Raw,
 				"normalized": v.String(),

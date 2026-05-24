@@ -26,11 +26,11 @@ func versionBumpCmd() *cobra.Command {
 Kinds: major, minor, patch, prerelease, final
 
 Examples:
-  verge version bump --from 1.2.3 --kind minor
-  verge version bump --from 1.2.3 --kind prerelease --stage dev
-  verge version bump --from 1.2.3-rc.1 --kind final
-  verge version bump --from 1.2.3 --auto
-  verge version bump --from 1.2.3 --kind minor --changelog --format json`,
+	verge bump --from 1.2.3 --kind minor
+	verge bump --from 1.2.3 --kind prerelease --stage dev
+	verge bump --from 1.2.3-rc.1 --kind final
+	verge bump --from 1.2.3 --auto
+	verge bump --from 1.2.3 --kind minor --changelog --format json`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if fromVersion == "" {
 				return fmt.Errorf("--from flag is required")
@@ -95,10 +95,11 @@ Examples:
 			rendered := version.NewRenderer(ecosystem).Render(bumped)
 
 			if changelog {
-				return PrintChangelog(nil, fromVersion, bumped.String(), kindStr, "version-bump", nil)
+				return PrintChangelog(nil, globalFlags.field, fromVersion, bumped.String(), kindStr, "version-bump", nil)
 			}
 
 			out := NewOutput(OutputFormat(globalFlags.format))
+			out.Field = globalFlags.field
 			data := map[string]interface{}{
 				"from":      fromVersion,
 				"kind":      kindStr,

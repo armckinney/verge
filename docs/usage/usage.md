@@ -10,18 +10,18 @@
 - [Quick Start](#quick-start)
 - [Global Flags](#global-flags)
 - [Commands](#commands)
-  - [version parse](#version-parse)
-  - [version compare](#version-compare)
-  - [version bump](#version-bump)
-  - [version current](#version-current)
-  - [version latest](#version-latest)
-  - [version info](#version-info)
+  - [parse](#parse)
+  - [compare](#compare)
+  - [bump](#bump)
+  - [current](#current)
+  - [latest](#latest)
+  - [info](#info)
 - [Output Formats](#output-formats)
 - [Version Format Schemes](#version-format-schemes)
 - [Exit Codes](#exit-codes)
 - [Configuration](#configuration)
 - [Environment Variables](#environment-variables)
-- [CI/CD Integration](ci-cd.md)
+- [CI/CD Integration](cicd.md)
 
 ---
 
@@ -59,19 +59,19 @@ Download from the [releases page](https://github.com/armckinney/verge/releases).
 
 ```bash
 # Parse a version
-verge version parse v1.2.3-rc.1
+verge parse v1.2.3-rc.1
 
 # Compare two versions (exit code 10 = left < right)
-verge version compare 1.2.3 2.0.0; echo $?
+verge compare 1.2.3 2.0.0; echo $?
 
 # Bump a version
-verge version bump --from 1.2.3 --kind minor
+verge bump --from 1.2.3 --kind minor
 
 # Get current version from git tags
-verge version current
+verge current
 
 # Auto-detect bump kind from conventional commits
-verge version bump --from 1.2.3 --auto
+verge bump --from 1.2.3 --auto
 ```
 
 ---
@@ -84,18 +84,19 @@ Available on every command:
 |--------------------|-----------------|------------------------------------------|
 | `-c, --config`     | `.verge.yaml`  | Path to config file                      |
 | `-f, --format`     | `text`          | Output format: `text` or `json`          |
+| `--field`          |                 | Print a single top-level field from structured output |
 | `-v, --verbose`    | `false`         | Enable verbose output                    |
 
 ---
 
 ## Commands
 
-### version parse
+### parse
 
 Parse a version string and display its components and ecosystem renderings.
 
 ```
-verge version parse <version> [flags]
+verge parse <version> [flags]
 ```
 
 **Flags**
@@ -108,19 +109,19 @@ verge version parse <version> [flags]
 
 ```bash
 # Parse a plain semver
-verge version parse 1.2.3
+verge parse 1.2.3
 
 # Parse a v-prefixed prerelease
-verge version parse v1.2.3-rc.2
+verge parse v1.2.3-rc.2
 
 # Parse a PEP 440 version
-verge version parse 1.2.3dev4
+verge parse 1.2.3dev4
 
 # Parse and render for PEP 440 (Python) only
-verge version parse 1.2.3-rc.1 --ecosystem pep440
+verge parse 1.2.3-rc.1 --ecosystem pep440
 
 # JSON output
-verge version parse v1.2.3-rc.2 --format json
+verge parse v1.2.3-rc.2 --format json
 ```
 
 **Text output** (example for `v1.2.3-rc.2`):
@@ -143,12 +144,12 @@ rendered.pep440         1.2.3rc2
 
 ---
 
-### version compare
+### compare
 
 Compare two version strings.
 
 ```
-verge version compare <left> <right> [flags]
+verge compare <left> <right> [flags]
 ```
 
 Exits with `0` (equal), `10` (left < right), or `11` (left > right).
@@ -156,12 +157,12 @@ Exits with `0` (equal), `10` (left < right), or `11` (left > right).
 **Examples**
 
 ```bash
-verge version compare 1.2.3 2.0.0   # exit 10
-verge version compare 2.0.0 1.2.3   # exit 11
-verge version compare 1.2.3 1.2.3   # exit 0
+verge compare 1.2.3 2.0.0   # exit 10
+verge compare 2.0.0 1.2.3   # exit 11
+verge compare 1.2.3 1.2.3   # exit 0
 
 # In a script
-if verge version compare "$CURRENT" "$CANDIDATE"; then
+if verge compare "$CURRENT" "$CANDIDATE"; then
   echo "equal"
 elif [ $? -eq 10 ]; then
   echo "$CANDIDATE is newer"
@@ -170,12 +171,12 @@ fi
 
 ---
 
-### version bump
+### bump
 
 Compute the next version from a given version and bump kind.
 
 ```
-verge version bump [flags]
+verge bump [flags]
 ```
 
 **Flags**
@@ -204,23 +205,23 @@ verge version bump [flags]
 
 ```bash
 # Bump minor
-verge version bump --from 1.2.3 --kind minor
+verge bump --from 1.2.3 --kind minor
 # → 1.3.0
 
 # Bump to a prerelease
-verge version bump --from 1.2.3 --kind prerelease --stage rc
+verge bump --from 1.2.3 --kind prerelease --stage rc
 # → 1.2.4-rc.1
 
 # Promote a prerelease to final
-verge version bump --from 1.2.3-rc.1 --kind final
+verge bump --from 1.2.3-rc.1 --kind final
 # → 1.2.3
 
 # Auto-detect from conventional commits
-verge version bump --from 1.2.3 --auto
+verge bump --from 1.2.3 --auto
 # reads git commits since tag v1.2.3
 
 # Changelog JSON output
-verge version bump --from 1.2.3 --kind minor --changelog --format json
+verge bump --from 1.2.3 --kind minor --changelog --format json
 ```
 
 **Changelog JSON output** (with `--changelog --format json`):
@@ -253,12 +254,12 @@ With `--auto`, verge reads `git log <from>..HEAD` and determines the bump kind:
 
 ---
 
-### version current
+### current
 
 Get the highest (current) version from git tags, excluding prereleases by default.
 
 ```
-verge version current [flags]
+verge current [flags]
 ```
 
 **Flags**
@@ -272,20 +273,23 @@ verge version current [flags]
 **Examples**
 
 ```bash
-verge version current
-verge version current --ecosystem python
-verge version current --explain
-verge version current --format json
+verge current
+
+# Get a single field without jq
+verge current --field normalized
+verge current --ecosystem python
+verge current --explain
+verge current --format json
 ```
 
 ---
 
-### version latest
+### latest
 
 Get the latest (highest) version from git tags, with optional stage/core filtering.
 
 ```
-verge version latest [flags]
+verge latest [flags]
 ```
 
 **Flags**
@@ -302,29 +306,29 @@ verge version latest [flags]
 
 ```bash
 # Latest overall
-verge version latest
+verge latest
 
 # Latest rc candidate
-verge version latest --stage rc
+verge latest --stage rc
 
 # Latest dev build for a specific core version
-verge version latest --core 1.2.3 --stage dev
+verge latest --core 1.2.3 --stage dev
 
 # JSON output
-verge version latest --format json
+verge latest --format json
 
 # Show decision reasoning
-verge version latest --explain
+verge latest --explain
 ```
 
 ---
 
-### version info
+### info
 
 Show the verge build version information.
 
 ```bash
-verge version info
+verge info
 ```
 
 ---
@@ -360,8 +364,11 @@ Machine-readable JSON object:
 Use JSON output when integrating with CI scripts, `jq`, or changelog tools:
 
 ```bash
-verge version bump --from 1.2.3 --kind minor --format json | jq -r '.rendered'
+verge bump --from 1.2.3 --kind minor --format json | jq -r '.rendered'
 # v1.3.0
+
+# Or use the global field selector
+verge bump --from 1.2.3 --kind minor --field to
 ```
 
 ---
@@ -487,10 +494,10 @@ jobs:
           fetch-depth: 0  # required for git log history
 
       - name: Get current version
-        run: echo "CURRENT=$(verge version current --format json | jq -r .version)" >> $GITHUB_ENV
+        run: echo "CURRENT=$(verge current --field version)" >> $GITHUB_ENV
 
       - name: Auto-detect next version from conventional commits
-        run: echo "NEXT=$(verge version bump --from "$CURRENT" --auto --format json | jq -r .to)" >> $GITHUB_ENV
+        run: echo "NEXT=$(verge bump --from "$CURRENT" --auto --format json | jq -r .to)" >> $GITHUB_ENV
 
       - name: Tag and push
         run: |
@@ -504,10 +511,10 @@ jobs:
 #!/usr/bin/env bash
 set -euo pipefail
 
-CURRENT=$(verge version current --format json | jq -r .version)
+CURRENT=$(verge current --field version)
 PROPOSED="${1:?usage: $0 <proposed-version>}"
 
-verge version compare "$CURRENT" "$PROPOSED"
+verge compare "$CURRENT" "$PROPOSED"
 CODE=$?
 
 if [ "$CODE" -eq 11 ]; then
@@ -521,7 +528,7 @@ echo "OK: $PROPOSED is valid next version (current: $CURRENT)"
 
 ```bash
 TAG="v1.3.0-rc.2"
-eval "$(verge version parse "$TAG" --format json | jq -r '
+eval "$(verge parse "$TAG" --format json | jq -r '
   "MAJOR=\(.parsed.major)",
   "MINOR=\(.parsed.minor)",
   "PATCH=\(.parsed.patch)",
@@ -535,7 +542,7 @@ echo "Building $MAJOR.$MINOR.$PATCH ($STAGE)"
 ```bash
 VERSION="1.3.0-rc.1"
 for scheme in v-semver semver pep440; do
-  rendered=$(verge version parse "$VERSION" --ecosystem "$scheme" --format json | jq -r .rendered)
+  rendered=$(verge parse "$VERSION" --ecosystem "$scheme" --format json | jq -r .rendered)
   echo "$scheme: $rendered"
 done
 ```

@@ -130,7 +130,7 @@ Example test cases:
 - [ ] Unit test: Sequence types are detected correctly
 - [ ] Unit test: Invalid versions return clear errors with suggestions
 - [ ] Unit test: v-prefix is handled correctly
-- [ ] Integration test: `verge version parse 1.2.3` outputs correct normalized form
+- [ ] Integration test: `verge parse 1.2.3` outputs correct normalized form
 
 ## Related Tickets
 

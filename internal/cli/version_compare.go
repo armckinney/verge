@@ -33,15 +33,20 @@ Exit codes:
 			result := comparator.Compare(left, right)
 
 			out := NewOutput(OutputFormat(globalFlags.format))
+			out.Field = globalFlags.field
 			switch result {
 			case -1:
-				out.PrintValue("less")
+				if err := out.PrintValue("less"); err != nil {
+					return err
+				}
 				os.Exit(ExitCompareLeft)
 			case 1:
-				out.PrintValue("greater")
+				if err := out.PrintValue("greater"); err != nil {
+					return err
+				}
 				os.Exit(ExitCompareRight)
 			default:
-				out.PrintValue("equal")
+				return out.PrintValue("equal")
 			}
 			return nil
 		},

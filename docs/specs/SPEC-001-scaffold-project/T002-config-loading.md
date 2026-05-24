@@ -31,7 +31,7 @@ Implement the configuration system that loads `.verge.yaml`, validates against s
 - [ ] Environment variables (`VERGE_*`) can override config file values
 - [ ] `config.Default()` returns safe defaults (git-tags enabled, semver output, etc.)
 - [ ] Config is accessible throughout CLI via a global or context-injected variable
-- [ ] `verge version --config /path/to/custom.yaml` works
+- [ ] `verge current --config /path/to/custom.yaml` works
 - [ ] YAML parsing handles missing optional fields gracefully
 - [ ] Invalid YAML returns clear error message with line number
 
@@ -123,7 +123,7 @@ autoBump:
 - [ ] Unit test: Load invalid YAML → clear error message
 - [ ] Unit test: Override config value via env var `VERGE_ECOSYSTEM=python`
 - [ ] Unit test: Load non-existent config file → uses defaults (or error if required)
-- [ ] Integration test: `verge version current` loads config successfully
+- [ ] Integration test: `verge current` loads config successfully
 
 ## Related Tickets
 

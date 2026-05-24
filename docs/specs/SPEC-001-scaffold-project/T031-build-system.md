@@ -30,7 +30,7 @@ Set up cross-platform build infrastructure using goreleaser to produce binaries 
   - `app-linux-arm64` (Linux ARM64)
   - `app-windows-amd64.exe` (Windows x86-64)
   - `app-windows-arm64.exe` (Windows ARM64)
-- [ ] `verge version -V` works and reports version from build metadata
+- [ ] `verge info` works and reports version from build metadata
 - [ ] Build metadata includes Git commit hash and build timestamp
 - [ ] SHA256 checksums generated for all binaries
 - [ ] Local build works: `goreleaser build --single-target`

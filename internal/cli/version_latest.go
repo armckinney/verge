@@ -27,11 +27,11 @@ func versionLatestCmd() *cobra.Command {
 Supports filtering by core version and prerelease stage.
 
 Examples:
-  verge version latest
-  verge version latest --stage rc
-  verge version latest --core 1.2.3 --stage dev
-  verge version latest --explain
-  verge version latest --format json`,
+	verge latest
+	verge latest --stage rc
+	verge latest --core 1.2.3 --stage dev
+	verge latest --explain
+	verge latest --format json`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cfg, err := config.Load(globalFlags.configPath)
 			if err != nil {
@@ -103,6 +103,7 @@ Examples:
 			rendered := version.NewRenderer(ecosystem).Render(v)
 
 			out := NewOutput(OutputFormat(globalFlags.format))
+			out.Field = globalFlags.field
 			data := map[string]interface{}{
 				"version":    results[0].Raw,
 				"normalized": v.String(),

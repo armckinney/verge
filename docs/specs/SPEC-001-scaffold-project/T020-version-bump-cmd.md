@@ -23,7 +23,7 @@ Implement the `version bump` command to compute the next version.
 ## Acceptance Criteria
 
 - [ ] `internal/cli/version_bump.go` implements full logic
-- [ ] Command signature: `verge version bump --from <version> --kind <kind> [flags]`
+- [ ] Command signature: `verge bump --from <version> --kind <kind> [flags]`
 - [ ] `--from` flag (required) — current version
 - [ ] `--kind` flag (required) — bump type
 - [ ] `--stage` flag (optional, for prerelease) — target stage
@@ -41,20 +41,20 @@ Implement the `version bump` command to compute the next version.
 ### Command Behavior
 
 ```bash
-$ verge version bump --from 1.2.3 --kind minor
+$ verge bump --from 1.2.3 --kind minor
 From:     1.2.3
 Bump:     minor
 To:       1.3.0
 Ecosystem: go
 Rendered: v1.3.0
 
-$ verge version bump --from 1.2.3 --kind prerelease --stage dev
+$ verge bump --from 1.2.3 --kind prerelease --stage dev
 From:     1.2.3
 Bump:     prerelease
 Stage:    dev
 To:       1.2.4-dev.1
 
-$ verge version bump --from 1.2.3-rc.1 --kind final
+$ verge bump --from 1.2.3-rc.1 --kind final
 From:     1.2.3-rc.1
 Bump:     final
 To:       1.2.3

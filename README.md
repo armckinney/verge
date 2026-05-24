@@ -1,65 +1,64 @@
-# Go API Template
+# Verge
 
-This is a template for a Go API project. It follows a standard directory structure and includes basic setup for an HTTP server, database connection (PostgreSQL), and routing.
+Version Merge at the bleeding edge.
 
-## Project Structure
+`verge` is a semantic versioning CLI for parsing, comparing, bumping, and rendering versions across ecosystems.
 
-- `cmd/api`: Entry point of the application.
-- `internal/server`: Server setup and route registration.
-- `internal/database`: Database connection logic.
+## Install
 
-## Prerequisites
+Download the latest release and install (Linux example):
 
-- Go 1.25+
-- Docker (for database)
+```bash
+curl -sSL https://github.com/armckinney/verge/releases/latest/download/verge-linux-amd64 -o verge
+chmod +x verge
+sudo mv verge /usr/local/bin/
+verge info
+```
 
-## Getting Started
+Replace `verge-linux-amd64` with the appropriate binary for your platform (e.g., `verge-darwin-amd64` for macOS, `verge-windows-amd64.exe` for Windows). See [GitHub Releases](https://github.com/armckinney/verge/releases) for all available downloads.
 
-1. **Clone the repository** (if not already done).
+Install with Go:
 
+```bash
+go install example.com/verge/cmd/verge@latest
+verge info
+```
 
-2. **Environment Variables**:
-    The application looks for a `.env` file (loaded via `godotenv`). You can create one based on your needs.
-    Example `.env`:
+## Quick Usage
 
-    ```env
-    PORT=8080
-    DB_URL=postgres://postgres:postgres@localhost:5432/templatedb?sslmode=disable
-    ```
+Parse a version:
 
-    *Note: The project uses `github.com/joho/godotenv` to auto-load `.env` files locally.*
+```bash
+verge parse v1.2.3-rc.1
+```
 
-3. **Run the Database**:
-    If you are running within the provided Devcontainer, a PostgreSQL instance is already running and configured (service `devdatabase`).
-    
-    If running locally without the Devcontainer, ensure you have a PostgreSQL instance running and update `DB_URL` accordingly.
+Compare two versions (`10` means left is older, `11` means left is newer):
 
-4. **Run the Application**:
+```bash
+verge compare 1.2.3 2.0.0; echo $?
+```
 
-    ```bash
-    make run
-    ```
+Bump a version:
 
-    The server will start on `http://localhost:8080` (or the port specified in `.env`).
+```bash
+verge bump --from 1.2.3 --kind minor
+```
 
-5. **Test the Endpoints**:
-    - Health Check: `http://localhost:8080/health`
-    - Hello World: `http://localhost:8080/`
+Get current version from local git tags:
 
-## Useful Commands
+```bash
+verge current
+```
 
-- `make build`: Build the binary.
-- `make run`: Run the application.
-- `make test`: Run tests (includes database setup).
-- `make lint`: Run linters (`gofmt` and `go vet`).
-- `make fmt`: Format code (`go fmt`).
-- `make watch`: Run with live reload (uses `air`).
-- `make clean`: Clean up artifacts.
+Use JSON output for scripting:
 
-## Dependencies
+```bash
+verge --format json latest
+```
 
-- [chi](https://github.com/go-chi/chi) or Standard `net/http` for routing (Used Standard library here).
-- [pgx](https://github.com/jackc/pgx) for PostgreSQL driver.
-- [godotenv](https://github.com/joho/godotenv) for environment variable management.
+## Documentation
 
-# verge
+- Usage guide: [docs/usage/usage.md](docs/usage/usage.md)
+- Configuration reference: [docs/usage/configuration.md](docs/usage/configuration.md)
+- CI/CD notes: [docs/usage/cicd.md](docs/usage/cicd.md)
+- Use-case examples: [docs/usage/examples/README.md](docs/usage/examples/README.md)

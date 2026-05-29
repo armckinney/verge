@@ -1,13 +1,13 @@
-# `verge ini-config`
+# `verge init`
 
-The `ini-config` command assists in scaffolding standard, out-of-the-box configuration files for your workspace.
+The `init` command assists in scaffolding standard, out-of-the-box configuration files for your workspace.
 
 ---
 
 ## Usage
 
 ```bash
-verge ini-config [flags]
+verge init [flags]
 ```
 
 ### Command-Specific Flags
@@ -35,13 +35,13 @@ To ensure that existing configuration configurations are **never accidentally ov
 ### 1. Simple Scaffolding
 Create a fresh config:
 ```bash
-$ verge ini-config
+$ verge init
 Wrote config to .verge.yaml
 ```
 
 ### 2. Scaffold with specific template when `.verge.yaml` already exists
 ```bash
-$ verge ini-config --template gittag-vsemver
+$ verge init --template gittag-vsemver
 Wrote config to .verge.gittag-vsemver.yaml
 ```
 

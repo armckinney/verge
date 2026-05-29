@@ -90,7 +90,7 @@ Calculates and returns the logically bumped next version.
 
 ---
 
-### Command: `verge ini-config`
+### Command: `verge init`
 Generates boilerplate configurations to assist in fast workspace setup.
 
 * **Flags:**

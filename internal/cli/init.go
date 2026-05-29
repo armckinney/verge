@@ -7,11 +7,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func iniConfigCmd() *cobra.Command {
+func initCmd() *cobra.Command {
 	var templateName string
 
 	cmd := &cobra.Command{
-		Use:   "ini-config",
+		Use:   "init",
 		Short: "Generate configuration boilerplate",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			content := "version_type: semver\nprovider:\n  type: gittag\n"

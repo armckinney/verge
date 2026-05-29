@@ -31,6 +31,11 @@ func Load(configPath string) (*Config, error) {
 	}
 
 	applyEnvOverrides(cfg)
+
+	if errs := Validate(cfg); len(errs) > 0 {
+		return nil, fmt.Errorf("config validation failed: %v", errs[0])
+	}
+
 	return cfg, nil
 }
 

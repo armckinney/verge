@@ -34,4 +34,4 @@ Verge uses standard exit codes to signal status to CI automation tasks:
 * [`verge current`](current.md): Retrieves the currently active locally-tracked version.
 * [`verge latest`](latest.md): Queries the active provider for the highest recorded version.
 * [`verge bump`](bump.md): Computes and outputs the next version based on configuration and stage instructions.
-* [`verge ini-config`](ini-config.md): Generates a boilerplate config file based on typical ecosystem templates.
+* [`verge init`](init.md): Generates a boilerplate config file based on typical ecosystem templates.

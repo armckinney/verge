@@ -46,7 +46,7 @@ func init() {
 	rootCmd.AddCommand(
 		versionCurrentCmd(),
 		versionLatestCmd(),
-		iniConfigCmd(),
+		initCmd(),
 		versionBumpCmd(),
 		versionInfoCmd(),
 	)

@@ -13,7 +13,7 @@ func GetCurrent(cfg *config.Config, prefix string) (*version.Version, error) {
 		return nil, fmt.Errorf("current command only supports local tracking providers, got: %s", cfg.Provider.Type)
 	}
 
-	p, err := NewFromConfig(cfg.Provider)
+	p, err := NewFromConfig(cfg)
 	if err != nil {
 		return nil, fmt.Errorf("failed to init provider: %w", err)
 	}

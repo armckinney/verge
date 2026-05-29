@@ -14,6 +14,7 @@ These flags are persistent and available across all commands:
   * **`json`**: Outputs structured JSON metadata containing rich execution details (e.g., `version`, `previous`, `bump_kind`, `type`, `provider`).
 * **`--field string`**: Extract a single top-level field from the structured command output (extremely useful in JSON mode to pluck variables).
 * **`-v, --verbose`**: Enables detailed verbose logging on `stderr`.
+* **`--no-cache`**: Disables transparent remote provider caching (e.g., for GitHub Releases or GHCR) and forces a fresh network lookup. By default, remote queries are cached securely in `~/.cache/verge/` for 5 minutes to eliminate GitHub API rate limits.
 
 ---
 

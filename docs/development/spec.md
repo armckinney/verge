@@ -26,6 +26,7 @@ Verge addresses a common problem in continuous integration pipelines: parsing, c
 * `-f, --format string`: Serialization output format: `text` or `json` (default: `"text"`).
 * `-v, --verbose`: Enable diagnostic verbose logging on `stderr`.
 * `--field string`: Pluck a single top-level field from the structured command output (useful to extract parameters in shell scripts).
+* `--no-cache`: Disables remote provider disk caching (e.g. GitHub Releases/GHCR) and forces fresh lookup (default: false).
 
 ---
 

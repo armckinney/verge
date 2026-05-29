@@ -19,6 +19,7 @@ func versionCurrentCmd() *cobra.Command {
 			if err != nil {
 				return NewError(ExitConfigError, "loading config: %v", err)
 			}
+			cfg.NoCache = globalFlags.noCache
 
 			// Delegate domain logic
 			v, err := domain.GetCurrent(cfg, "")

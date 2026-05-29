@@ -28,6 +28,7 @@ func versionBumpCmd() *cobra.Command {
 			if err != nil {
 				return NewError(ExitConfigError, "loading config: %v", err)
 			}
+			cfg.NoCache = globalFlags.noCache
 
 			// CLI Overrides Config
 			if versionType != "" {

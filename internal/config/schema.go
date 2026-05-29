@@ -6,6 +6,7 @@ type Config struct {
 	Default     DefaultConfig  `yaml:"default"`
 	Sequence    SequenceConfig `yaml:"sequence"`
 	Provider    ProviderRaw    `yaml:"provider"`
+	NoCache     bool           `yaml:"-"`
 }
 
 // DefaultConfig holds default values for bumping logic.

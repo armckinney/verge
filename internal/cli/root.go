@@ -16,6 +16,7 @@ var (
 		configPath string
 		format     string
 		field      string
+		noCache    bool
 	}
 )
 
@@ -42,6 +43,7 @@ func init() {
 	rootCmd.PersistentFlags().StringVarP(&globalFlags.configPath, "config", "c", "", "Config file path (default: .verge.yaml)")
 	rootCmd.PersistentFlags().StringVarP(&globalFlags.format, "format", "f", "text", "Output format: text or json")
 	rootCmd.PersistentFlags().StringVar(&globalFlags.field, "field", "", "Print a single top-level field from structured command output")
+	rootCmd.PersistentFlags().BoolVar(&globalFlags.noCache, "no-cache", false, "Disable remote provider caching and force fresh lookup")
 
 	rootCmd.AddCommand(
 		versionCurrentCmd(),

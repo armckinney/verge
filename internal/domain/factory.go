@@ -1,48 +1,67 @@
 package domain
 
 import (
+	"crypto/sha256"
+	"encoding/json"
+	"fmt"
+	"time"
+
 	"example.com/verge/internal/config"
 	"example.com/verge/internal/providers"
 	"example.com/verge/internal/providers/ghcr"
 	"example.com/verge/internal/providers/ghrelease"
 	"example.com/verge/internal/providers/gittag"
-	"fmt"
 	"gopkg.in/yaml.v3"
 )
 
 // NewFromConfig builds a VersionProvider given the raw provider configuration.
-func NewFromConfig(raw config.ProviderRaw) (providers.VersionProvider, error) {
+func NewFromConfig(cfg *config.Config) (providers.VersionProvider, error) {
 	// Re-marshal and unmarshal to parse strictly into the target structs
-	data, err := yaml.Marshal(raw.Raw)
+	data, err := yaml.Marshal(cfg.Provider.Raw)
 	if err != nil {
 		return nil, fmt.Errorf("failed to marshal provider config: %w", err)
 	}
 
-	switch raw.Type {
+	var p providers.VersionProvider
+	switch cfg.Provider.Type {
 	case "gittag":
-		var cfg gittag.Config
-		if err := yaml.Unmarshal(data, &cfg); err != nil {
+		var pCfg gittag.Config
+		if err := yaml.Unmarshal(data, &pCfg); err != nil {
 			return nil, err
 		}
-		return gittag.NewProvider(cfg), nil
+		p = gittag.NewProvider(pCfg)
 	case "ghrelease":
-		var cfg ghrelease.Config
-		if err := yaml.Unmarshal(data, &cfg); err != nil {
+		var pCfg ghrelease.Config
+		if err := yaml.Unmarshal(data, &pCfg); err != nil {
 			return nil, err
 		}
-		return ghrelease.NewProvider(cfg), nil
+		p = ghrelease.NewProvider(pCfg)
 	case "ghcr":
-		var cfg ghcr.Config
-		if err := yaml.Unmarshal(data, &cfg); err != nil {
+		var pCfg ghcr.Config
+		if err := yaml.Unmarshal(data, &pCfg); err != nil {
 			return nil, err
 		}
-		return ghcr.NewProvider(cfg), nil
+		p = ghcr.NewProvider(pCfg)
 	default:
-		return nil, fmt.Errorf("unknown provider type: %s", raw.Type)
+		return nil, fmt.Errorf("unknown provider type: %s", cfg.Provider.Type)
 	}
+
+	// Wrap in a caching provider decorator if it's a remote provider
+	if !IsLocal(cfg.Provider) {
+		cacheKey := fmt.Sprintf("%s:%s", cfg.Provider.Type, hashConfig(cfg.Provider.Raw))
+		p = providers.NewCachingProvider(p, cacheKey, cfg.NoCache, 5*time.Minute)
+	}
+
+	return p, nil
 }
 
 // IsLocal tracks whether the provider reads from local state or network.
 func IsLocal(raw config.ProviderRaw) bool {
 	return raw.Type == "gittag"
+}
+
+func hashConfig(raw map[string]interface{}) string {
+	data, _ := json.Marshal(raw)
+	h := sha256.Sum256(data)
+	return fmt.Sprintf("%x", h[:8]) // Keep it short and readable
 }

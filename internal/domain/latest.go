@@ -14,7 +14,7 @@ type LatestOptions struct {
 
 // GetLatest executes the logic for the "latest" action.
 func GetLatest(cfg *config.Config, opts LatestOptions) (*version.Version, error) {
-	p, err := NewFromConfig(cfg.Provider)
+	p, err := NewFromConfig(cfg)
 	if err != nil {
 		return nil, fmt.Errorf("failed to init provider: %w", err)
 	}

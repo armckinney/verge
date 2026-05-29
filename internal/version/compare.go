@@ -9,8 +9,8 @@ func NewComparator() Comparator {
 
 var stageOrder = map[Stage]int{
 	StageDev:   0,
-	StageAlpha: 1,
-	StageBeta:  2,
+	StageA: 1,
+	StageB:  2,
 	StageRC:    3,
 	StageFinal: 4,
 }

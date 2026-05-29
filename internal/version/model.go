@@ -10,8 +10,8 @@ type Stage int
 const (
 	StageFinal Stage = iota
 	StageDev
-	StageAlpha
-	StageBeta
+	StageA
+	StageB
 	StageRC
 )
 
@@ -21,10 +21,10 @@ func (s Stage) String() string {
 		return "final"
 	case StageDev:
 		return "dev"
-	case StageAlpha:
-		return "alpha"
-	case StageBeta:
-		return "beta"
+	case StageA:
+		return "a"
+	case StageB:
+		return "b"
 	case StageRC:
 		return "rc"
 	}
@@ -38,22 +38,14 @@ func StageFromString(s string) (Stage, error) {
 	case "dev":
 		return StageDev, nil
 	case "alpha", "a":
-		return StageAlpha, nil
+		return StageA, nil
 	case "beta", "b":
-		return StageBeta, nil
+		return StageB, nil
 	case "rc":
 		return StageRC, nil
 	}
 	return StageFinal, fmt.Errorf("unknown stage: %q", s)
 }
-
-type Scheme string
-
-const (
-	SchemeSemVer Scheme = "semver"
-	SchemePEP440 Scheme = "pep440"
-	SchemeAuto   Scheme = "auto"
-)
 
 type SequenceType string
 
@@ -73,7 +65,7 @@ type Version struct {
 	Sequence     interface{} // int or string
 	SequenceType SequenceType
 	Original     string
-	Scheme       Scheme
+	VersionType  string // e.g., "semver", "vsemver", "pep440"
 }
 
 func (v *Version) String() string {

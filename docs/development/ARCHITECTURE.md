@@ -1,347 +1,160 @@
-# Verge Architecture Overview
+# Verge Architecture Guide
 
-## Project Summary
-
-**Verge** is a semantic versioning CLI tool designed to parse, compare, bump, and query versions across multiple ecosystems (Go, Python, Terraform, Containers, GitHub Actions). It provides a unified interface for version management with support for multiple version format schemes (semver, v-semver, pep440) and multiple sources (Git tags, GitHub releases, container registries).
+Verge is a deterministic, fast version generation CLI written in Go. It is architected under the principles of **Domain-Driven Design (DDD)** and **Clean Architecture**, completely decoupling user-interface parsing, configuration parsing, external integrations, and the core domain calculation models.
 
 ---
 
-## Core Concepts
+## 1. System Package Architecture
 
-### Version Model
+The physical package structure is designed to isolate concerns cleanly. High-level orchestrators (CLI) depend on intermediate domain packages, which in turn use abstract interfaces to interact with external providers or formats:
 
-A `Version` in Verge is a structured representation of a semantic version with the following components:
+```mermaid
+graph TD
+    CLI[internal/cli] --> Domain[internal/domain]
+    Domain --> Config[internal/config]
+    Domain --> Types[internal/types]
+    Domain --> Providers[internal/providers]
+    Domain --> Sequence[internal/sequence]
+    Domain --> Version[internal/version]
+    
+    Providers --> Gittag[internal/providers/gittag]
+    Providers --> Ghrelease[internal/providers/ghrelease]
+    Providers --> Ghcr[internal/providers/ghcr]
+```
 
-- **Major, Minor, Patch**: Core semantic version numbers
-- **Stage**: Release stage (e.g., alpha, beta, rc, final)
-- **Sequence**: Build metadata (commit SHA, git height, content hash, etc.)
-- **SequenceType**: Classification of the sequence (numeric, commit SHA, content hash, build ID, etc.)
-- **Original**: Raw string representation
+### Detailed Package Breakdown
 
-The version model is ecosystem-agnostic, allowing versions from different sources to be compared and normalized.
-
-### Ecosystem Abstraction
-
-Verge abstracts version format differences across ecosystems through registry patterns. Each ecosystem (Go, Python, Terraform) defines:
-
-- **Format schemes**: How versions are parsed and rendered for that ecosystem
-- **Renderers**: Functions that format a `Version` into an ecosystem-specific string
-- **Parsing rules**: How to convert ecosystem-specific version strings to the generic `Version` model
-
-### Version Sources (Providers)
-
-Verge queries versions from multiple sources:
-
-- **Git Tags**: Local or remote Git repository tags
-- **GitHub Releases**: GitHub API for official releases
-- **GHCR**: GitHub Container Registry for container images
-- **Extensible**: New providers can be added following the `VersionProvider` interface
-
-### Configuration-Driven Behavior
-
-Verge uses YAML-based configuration (`.verge.yaml`) to define:
-
-- Which ecosystems and formats to use
-- Which sources to query and their precedence
-- Sequence interpretation rules (e.g., commit SHA length)
-- Bump policies and rules
-- Auto-bump configurations
+| Package Path | Core Responsibility |
+| :--- | :--- |
+| `cmd/verge/` | Primary entry point. Responsible for injecting build information (ldflags) and executing the root command. |
+| `internal/cli/` | User Interface (CLI flags, stdout/stderr formatting, error code handling). Leverages the `spf13/cobra` command framework. |
+| `internal/config/` | Config parsing (`.verge.yaml`), default overrides, and environment variable lookups. |
+| `internal/domain/` | Orchestration layer. Houses the factories and service operations (e.g. `domain.Bump`, `domain.GetLatest`) that tie all subcomponents together. |
+| `internal/types/` | Formatting and syntax modules. Dictates how `semver`, `vsemver`, and `pep440` versions are parsed from and rendered back to strings. |
+| `internal/providers/` | History retrieval abstractions. Integrates against local git systems or remote HTTP APIs to gather historical tags. |
+| `internal/sequence/` | Calculations of suffix pre-release tokens (`increment`, `filehash`, `passed`). |
+| `internal/version/` | Core domain structs and pure bumping mathematical algorithms (totally decoupled from CLI or filesystem). |
 
 ---
 
-## Architecture Layers
+## 2. Core Interfaces
 
-### 1. CLI Layer (`internal/cli/`)
+Extensibility is achieved by programming to interfaces. Adding support for new formats or cloud providers requires implementing these exact contracts:
 
-**Responsibility**: Command-line interface and user interaction
-
-- **Root command** (`root.go`): Sets up global flags, registers subcommands
-- **Version command** (`version.go`): Parent command for version operations
-- **Subcommands**:
-  - `version parse`: Parse and normalize a version string
-  - `version compare`: Compare two versions
-  - `version bump`: Bump a version according to rules
-  - `version current`: Get current version from configured sources
-  - `version latest`: Get latest version from configured sources
-  - `version info`: Display version information
-- **Output handlers** (`output.go`, `output_changelog.go`): Format results as text or JSON
-- **Error handling** (`errors.go`): Structured error codes and messages
-
-### 2. Configuration Layer (`internal/config/`)
-
-**Responsibility**: Load and validate configuration
-
-- **Schema** (`schema.go`): Configuration structure and supported options
-- **Loader** (`load.go`): Parse `.verge.yaml` files and apply defaults
-- **Defaults** (`defaults.go`): Default configuration values for different ecosystems
-
-### 3. Version Processing Layer (`internal/version/`)
-
-**Responsibility**: Core version logic
-
-**Key components**:
-
-- **Parser** (`parse.go`): Convert string to `Version` struct using format rules
-- **Normalizer** (`normalize.go`): Canonicalize versions (e.g., convert strings to integers where applicable)
-- **Comparator** (`compare.go`): Compare two `Version` objects using semantic versioning rules
-- **Bumper** (`bump.go`): Increment version based on bump kind (major, minor, patch, prerelease, final)
-- **Renderer** (`render.go`): Convert `Version` to formatted string for output
-- **Policy checker** (`policy.go`): Validate versions against configured policies
-- **Conventional commits** (`conventional.go`): Parse commit messages to determine bump requirements
-- **Type definitions** (`types.go`): Interfaces and constants for version operations
-
-### 4. Ecosystem Abstraction Layer (`internal/ecosystems/`)
-
-**Responsibility**: Handle ecosystem-specific formatting
-
-- **Registry** (`registry.go`): Central lookup for ecosystems and their renderers
-- **Formats** (`formats.go`): Define supported format schemes (semver, v-semver, pep440) and ecosystem aliases (go, python, terraform, etc.)
-- **Types** (`types.go`): Define `EcosystemRenderer` interface
-
-### 5. Provider Layer (`internal/providers/`)
-
-**Responsibility**: Fetch versions from external sources
-
-- **Provider interface** (`provider.go`): `VersionProvider` contract that all sources implement
-- **Git Tags** (`git_tags.go`): Query versions from local/remote Git tags
-- **GitHub Releases** (`github_releases.go`): Query GitHub API for releases
-- **GHCR** (`ghcr.go`): Query GitHub Container Registry
-- **Cache** (`cache.go`, `cache_test.go`): In-memory caching to avoid redundant queries
-- **Retry** (`retry.go`, `retry_test.go`): Exponential backoff retry logic for failed requests
-
-### 6. Sequence Interpretation Layer (`internal/sequence/`)
-
-**Responsibility**: Classify and handle version metadata sequences
-
-- **Interpreter** (`interpreter.go`): Detect and classify sequences (commit SHA, content hash, build ID, numeric)
-
-### 7. Testing Layer (`tests/`)
-
-**Responsibility**: Comprehensive test coverage
-
-- **Golden tests** (`golden_test.go`): Test parsing and rendering against a corpus of known versions
-- **Integration tests** (`integration/`): End-to-end testing of commands and provider functionality
-- **Test fixtures** (`fixtures/`): Test data and expected outputs
-
----
-
-## Data Flow Diagrams
-
-### Parse Command Flow
-
-```
-User Input (version string)
-    ↓
-[CLI] Parse Command
-    ↓
-[Config] Load .verge.yaml
-    ↓
-[Ecosystem] Select parser for format
-    ↓
-[Version] Parse string to Version struct
-    ↓
-[Version] Normalize Version
-    ↓
-[Version] Render to output format
-    ↓
-[CLI] Format and display output (text/JSON)
-```
-
-### Bump Command Flow
-
-```
-User Input (version, bump kind)
-    ↓
-[CLI] Version Bump Command
-    ↓
-[Config] Load configuration
-    ↓
-[Version] Parse current version
-    ↓
-[Version] Bump according to kind
-    ↓
-[Version] Apply policy checks
-    ↓
-[Version] Render bumped version
-    ↓
-[CLI] Output result
-```
-
-### Current/Latest Command Flow
-
-```
-[CLI] Current/Latest Command
-    ↓
-[Config] Load configuration
-    ↓
-[Providers] Initialize enabled providers (Git Tags, GitHub, GHCR)
-    ↓
-[Providers] Fetch versions from all sources
-    ↓
-[Providers] Cache results for future queries
-    ↓
-[Version] Parse raw results to Version objects
-    ↓
-[Version] Normalize and sort versions
-    ↓
-[Version] Select current or latest version
-    ↓
-[CLI] Format and output result
-```
-
----
-
-## Key Interfaces
-
-### Version Processing
-
+### A. Version Format: `types.VersionType`
+Decouples version syntax parsing and rendering from the CLI:
 ```go
-// Parser converts strings to Version objects
-type Parser interface {
-    Parse(input string) (*Version, error)
-}
-
-// Comparator ranks versions
-type Comparator interface {
-    Compare(a, b *Version) int  // -1, 0, or 1
-}
-
-// Bumper increments versions
-type Bumper interface {
-    Bump(v *Version, kind BumpKind, stage Stage) (*Version, error)
-}
-
-// Renderer converts to strings
-type Renderer interface {
-    Render(v *Version) string
+type VersionType interface {
+	Name() string
+	Parse(input string) (*version.Version, error)
+	Render(v *version.Version) string
 }
 ```
 
-### Ecosystem Support
-
+### B. History Source: `providers.VersionProvider`
+Abstracts local disk operations or remote web APIs:
 ```go
-// EcosystemRenderer formats versions for specific ecosystems
-type EcosystemRenderer interface {
-    Name() string
-    Render(major, minor, patch int, stage string, 
-            sequence interface{}, isPrerelease bool) string
-}
-```
-
-### Version Sources
-
-```go
-// VersionProvider fetches versions from external sources
 type VersionProvider interface {
-    Name() string
-    Fetch(opts QueryOptions) ([]*VersionResult, error)
+	Name() string
+	GetLatest(versionType string) (*version.Version, error)
+	GetLatestSpecific(versionType string, prefix string) (*version.Version, error)
+}
+```
+
+### C. Sequence Generator: `sequence.Calculator`
+Determines how suffix prerelease tags are computed:
+```go
+type Calculator interface {
+	Calculate(current interface{}) (interface{}, error)
+}
+```
+
+### E. Version Comparison & Bumping: `version.Comparator` & `version.Bumper`
+Encapsulates version comparison and modification logic:
+```go
+type Comparator interface {
+	Compare(a, b *Version) int
+}
+
+type Bumper interface {
+	Bump(v *Version, kind BumpKind, stage Stage) (*Version, error)
 }
 ```
 
 ---
 
-## Extension Points
+## 3. Core Execution Flows
 
-### Adding a New Ecosystem
+### Flow A: Querying Latest Version (`verge latest`)
 
-1. Create a renderer in `internal/ecosystems/`
-2. Register it in the ecosystem registry
-3. Define format schemes for parsing/rendering
-4. Add test cases for version parsing/rendering
+This flow depicts how Verge queries a provider, parses the results, and displays the highest version matching active rules:
 
-### Adding a New Version Source
+```mermaid
+sequenceDiagram
+    autonumber
+    actor CLI as internal/cli
+    participant DOM as internal/domain
+    participant CFG as internal/config
+    participant PROV as internal/providers
+    participant TYP as internal/types
 
-1. Implement the `VersionProvider` interface in `internal/providers/`
-2. Add configuration schema to `internal/config/schema.go`
-3. Update provider initialization logic
-4. Add integration tests
-
-### Custom Policies
-
-1. Extend `internal/version/policy.go` with new validation rules
-2. Update configuration schema to expose policy options
-3. Apply policies in bump logic
-
----
-
-## Configuration Structure
-
-The `.verge.yaml` file controls Verge's behavior:
-
-```yaml
-version: 1
-ecosystem: go                 # Default format for parsing/rendering
-
-format:
-  input: semver               # Input format scheme
-  output: semver              # Output format scheme
-  tagPrefix: "v"              # Prefix for version tags
-
-sources:
-  precedence: [git-tags, github-releases]  # Which source to prioritize
-  
-  git-tags:
-    enabled: true
-    fetch: true              # Fetch from remote
-    includePrerelease: true
-    
-  github-releases:
-    enabled: false
-    owner: armckinney
-    repo: verge
-    
-  ghcr:
-    enabled: false
-    image: ghcr.io/org/image
-
-sequence:
-  hashLength: 7              # Abbreviated commit SHA length
-
-autoBump:
-  enabled: false             # Auto-bump based on conventional commits
+    CLI->>CFG: config.Load(path)
+    CFG-->>CLI: *Config
+    CLI->>DOM: domain.GetLatest(cfg, opts)
+    DOM->>DOM: NewFromConfig(cfg.Provider)
+    DOM->>PROV: provider.GetLatest(versionType)
+    PROV->>PROV: fetchAndParse(versionType)
+    PROV->>TYP: Parse(tagString)
+    TYP-->>PROV: *Version
+    PROV->>PROV: Sort high-to-low (Comparator)
+    PROV-->>DOM: highest *Version
+    DOM-->>CLI: *Version
+    CLI->>TYP: Render(version)
+    TYP-->>CLI: tagString
+    CLI->>CLI: Print to os.Stdout (clean stdout)
 ```
 
 ---
 
-## Error Handling
+### Flow B: Bumping Version and Resolving Sequence (`verge bump`)
 
-Verge uses structured error codes for different failure scenarios:
+This flow details how Verge cascades options, determines the base version, performs the semantic component bump, and dynamically computes pre-release sequence hashes or numbers:
 
-- **Parse errors**: Invalid version format
-- **Config errors**: Missing or invalid configuration
-- **Provider errors**: Failed to fetch from source (with retry logic)
-- **Policy errors**: Version violates configured policies
-- **Comparison errors**: Cannot compare versions from different formats
+```mermaid
+sequenceDiagram
+    autonumber
+    actor CLI as internal/cli
+    participant DOM as internal/domain
+    participant BUMP as internal/version
+    participant SEQ as internal/sequence
 
-All errors are mapped to exit codes for CI/CD integration.
+    CLI->>DOM: domain.Bump(cfg, opts)
+    
+    alt Static version provided (--version)
+        DOM->>DOM: Parse explicit string
+    else Query provider
+        DOM->>DOM: GetLatest() from provider
+    end
+    
+    DOM->>BUMP: bumper.Bump(base, kind, stage)
+    Note over BUMP: Resets or preserves sequence<br/>based on stage transition rules
+    BUMP-->>DOM: *Version (bumped core)
+    
+    alt Version is pre-release
+        DOM->>SEQ: GetCalculator(cliOverride, cfg.Sequence)
+        DOM->>SEQ: calculator.Calculate(bumped.Sequence)
+        SEQ-->>DOM: newSequenceVal
+        DOM->>DOM: Assign newSequenceVal to bumped
+    end
+    
+    DOM-->>CLI: *Version (final bumped)
+    CLI->>CLI: Render and print representation
+```
 
 ---
 
-## Dependencies
+## 4. Architectural Safeguards
 
-**Primary**:
-- `github.com/spf13/cobra`: CLI framework
-- `gopkg.in/yaml.v3`: YAML configuration parsing
-
-**No external dependencies for core version logic**, allowing lightweight distribution and deployment.
-
----
-
-## Performance Considerations
-
-- **Caching**: In-memory cache for provider results to avoid redundant API calls
-- **Retries**: Exponential backoff with jitter for transient failures
-- **Streaming**: Processes versions as they are fetched rather than loading all in memory
-- **Concurrency**: Can be extended for parallel provider queries (current implementation is sequential)
-
----
-
-## Deployment Model
-
-Verge is a self-contained CLI binary with no external runtime dependencies. Distribution options:
-
-- **Binary releases**: Pre-built for Linux, macOS, Windows
-- **Go install**: `go install example.com/verge/cmd/verge@latest`
-- **Container images**: GHCR for containerized environments
-- **CI/CD integration**: Designed for GitHub Actions, GitLab CI, etc.
-
+1. **Side-Effect Free Execution:** The system provides strict read-only calculations. Under no circumstances should any code in `internal/` perform write commands to remote git providers, container registries, or modify source code files.
+2. **Stdout Hygiene:** To facilitate direct shell parameter execution `VAR=$(verge bump)`, no diagnostic logging, informational tracing, or errors should be printed to standard output (`os.Stdout`). All tracing, warnings, and error messages must go to `os.Stderr`.
+3. **Decoupled Formatting:** The `internal/version` package works strictly with integers and stage indicators. It contains no code formatting information (e.g., prefixing `v` or removing dots). String formatting details are confined to `internal/types`.

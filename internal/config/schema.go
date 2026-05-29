@@ -1,63 +1,29 @@
 package config
 
+// Config represents the root configuration of `.verge.yaml`.
 type Config struct {
-	Version   int            `yaml:"version"`
-	Ecosystem string         `yaml:"ecosystem"`
-	Format    FormatConfig   `yaml:"format"`
-	Sources   SourcesConfig  `yaml:"sources"`
-	Sequence  SequenceConfig `yaml:"sequence"`
-	Rules     RulesConfig    `yaml:"rules"`
-	AutoBump  AutoBumpConfig `yaml:"autoBump"`
+	VersionType string         `yaml:"version_type"`
+	Default     DefaultConfig  `yaml:"default"`
+	Sequence    SequenceConfig `yaml:"sequence"`
+	Provider    ProviderRaw    `yaml:"provider"`
 }
 
-type FormatConfig struct {
-	Input               string `yaml:"input"`
-	Output              string `yaml:"output"`
-	TagPrefix           string `yaml:"tagPrefix"`
-	SequenceInterpreter string `yaml:"sequenceInterpreter"`
+// DefaultConfig holds default values for bumping logic.
+type DefaultConfig struct {
+	BumpKind        string `yaml:"bump_kind"`
+	PrereleaseStage string `yaml:"prerelease_stage"`
 }
 
-type SourcesConfig struct {
-	Precedence     []string             `yaml:"precedence"`
-	GitTags        GitTagsConfig        `yaml:"git-tags"`
-	GitHubReleases GitHubReleasesConfig `yaml:"github-releases"`
-	GHCR           GHCRConfig           `yaml:"ghcr"`
-}
-
-type GitTagsConfig struct {
-	Enabled           bool   `yaml:"enabled"`
-	Fetch             bool   `yaml:"fetch"`
-	IncludePrerelease bool   `yaml:"includePrerelease"`
-	EcosystemParsing  string `yaml:"ecosystemParsing"`
-}
-
-type GitHubReleasesConfig struct {
-	Enabled           bool   `yaml:"enabled"`
-	Owner             string `yaml:"owner"`
-	Repo              string `yaml:"repo"`
-	IncludePrerelease bool   `yaml:"includePrerelease"`
-	IncludeDrafts     bool   `yaml:"includeDrafts"`
-}
-
-type GHCRConfig struct {
-	Enabled           bool   `yaml:"enabled"`
-	Image             string `yaml:"image"`
-	IncludePrerelease bool   `yaml:"includePrerelease"`
-}
-
+// SequenceConfig specifies how to compute sequence strings dynamically.
 type SequenceConfig struct {
-	HashLength       int    `yaml:"hashLength"`
-	AllowContentHash bool   `yaml:"allowContentHash"`
-	GHBuildPattern   string `yaml:"ghBuildPattern"`
+	Type    string   `yaml:"type"`
+	Targets []string `yaml:"targets"`
+	Length  int      `yaml:"length"`
 }
 
-type RulesConfig struct {
-	PrereleaseStage        string `yaml:"prereleaseStage"`
-	AllowMajorZeroBreaking bool   `yaml:"allowMajorZeroBreaking"`
-	DefaultBump            string `yaml:"defaultBump"`
-}
-
-type AutoBumpConfig struct {
-	ConventionalCommits bool     `yaml:"conventionalCommits"`
-	BreakingTokens      []string `yaml:"breakingTokens"`
+// ProviderRaw holds the raw, unparsed provider section of the config.
+// The `Type` acts as a discriminator so we know which provider to pass the remainder of the block to.
+type ProviderRaw struct {
+	Type string                 `yaml:"type"`
+	Raw  map[string]interface{} `yaml:",inline"`
 }

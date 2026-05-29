@@ -2,91 +2,47 @@ package cli
 
 import (
 	"fmt"
-	"sort"
 
 	"example.com/verge/internal/config"
-	"example.com/verge/internal/providers"
-	"example.com/verge/internal/version"
+	"example.com/verge/internal/domain"
+	"example.com/verge/internal/types"
 	"github.com/spf13/cobra"
 )
 
 func versionCurrentCmd() *cobra.Command {
-	var (
-		repoDir   string
-		ecosystem string
-		explain   bool
-	)
-
 	cmd := &cobra.Command{
 		Use:   "current",
-		Short: "Get the current version from git tags",
-		Long: `Fetch the current (highest) version from the configured version source.
-
-Examples:
-	verge current
-	verge current --ecosystem python
-	verge current --field normalized
-	verge current --explain
-	verge current --format json`,
+		Short: "Get the current locally tracked version",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cfg, err := config.Load(globalFlags.configPath)
 			if err != nil {
-				return fmt.Errorf("loading config: %w", err)
+				return NewError(ExitConfigError, "loading config: %v", err)
 			}
 
-			if ecosystem == "" {
-				ecosystem = cfg.Ecosystem
-			}
-
-			provider := providers.NewGitTagsProvider()
-			results, err := provider.Fetch(providers.QueryOptions{
-				IncludePrerelease: cfg.Sources.GitTags.IncludePrerelease,
-				TagPrefix:         cfg.Format.TagPrefix,
-				RepoDir:           repoDir,
-			})
+			// Delegate domain logic
+			v, err := domain.GetCurrent(cfg, "")
 			if err != nil {
-				return fmt.Errorf("fetching git tags: %w", err)
+				return fmt.Errorf("current failed: %w", err)
 			}
 
-			if len(results) == 0 {
-				return fmt.Errorf("no versions found in git tags (exit code %d)", ExitNotFound)
+			// Render and print
+			parser := types.Get(cfg.VersionType)
+			if parser == nil {
+				return fmt.Errorf("invalid version_type setup")
 			}
-
-			comparator := version.NewComparator()
-			sort.Slice(results, func(i, j int) bool {
-				return comparator.Compare(results[i].Version, results[j].Version) > 0
-			})
-
-			if explain {
-				fmt.Println("Candidates from git-tags:")
-				for _, r := range results {
-					if r.Version.IsPrerelease() {
-						fmt.Printf("  %s (prerelease)\n", r.Raw)
-					} else {
-						fmt.Printf("  %s (final)\n", r.Raw)
-					}
-				}
-				fmt.Println()
-			}
-
-			v := results[0].Version
-			rendered := version.NewRenderer(ecosystem).Render(v)
+			rendered := parser.Render(v)
 
 			out := NewOutput(OutputFormat(globalFlags.format))
 			out.Field = globalFlags.field
 			data := map[string]interface{}{
-				"version":    results[0].Raw,
+				"version":    v.Original,
 				"normalized": v.String(),
-				"ecosystem":  ecosystem,
-				"source":     "git-tags",
 				"rendered":   rendered,
 			}
 			return out.Print(data)
 		},
 	}
 
-	cmd.Flags().StringVar(&repoDir, "repo-dir", ".", "Repository directory")
-	cmd.Flags().StringVar(&ecosystem, "ecosystem", "", "Target format scheme for rendering (v-semver, semver, pep440, or ecosystem alias: go, terraform, containers, github-actions, python)")
-	cmd.Flags().BoolVar(&explain, "explain", false, "Show selection reasoning")
 	return cmd
 }

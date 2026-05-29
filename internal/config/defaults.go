@@ -2,45 +2,19 @@ package config
 
 func Default() *Config {
 	return &Config{
-		Version:   1,
-		Ecosystem: "v-semver",
-		Format: FormatConfig{
-			Input:               "auto",
-			Output:              "auto",
-			TagPrefix:           "v",
-			SequenceInterpreter: "auto",
-		},
-		Sources: SourcesConfig{
-			Precedence: []string{"git-tags"},
-			GitTags: GitTagsConfig{
-				Enabled:           true,
-				Fetch:             false,
-				IncludePrerelease: true,
-				EcosystemParsing:  "v-semver",
-			},
-			GitHubReleases: GitHubReleasesConfig{
-				Enabled:           false,
-				IncludePrerelease: true,
-				IncludeDrafts:     false,
-			},
-			GHCR: GHCRConfig{
-				Enabled:           false,
-				IncludePrerelease: true,
-			},
+		VersionType: "vsemver",
+		Default: DefaultConfig{
+			BumpKind:        "prerelease",
+			PrereleaseStage: "dev",
 		},
 		Sequence: SequenceConfig{
-			HashLength:       7,
-			AllowContentHash: true,
-			GHBuildPattern:   "gh-",
+			Type:    "increment",
+			Targets: []string{},
+			Length:  7,
 		},
-		Rules: RulesConfig{
-			PrereleaseStage:        "dev",
-			AllowMajorZeroBreaking: true,
-			DefaultBump:            "patch",
-		},
-		AutoBump: AutoBumpConfig{
-			ConventionalCommits: true,
-			BreakingTokens:      []string{"BREAKING CHANGE", "!:"},
+		Provider: ProviderRaw{
+			Type: "gittag",
+			Raw:  make(map[string]interface{}),
 		},
 	}
 }

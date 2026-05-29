@@ -3,109 +3,63 @@ package cli
 import (
 	"fmt"
 
-	"example.com/verge/internal/version"
+	"example.com/verge/internal/config"
+	"example.com/verge/internal/domain"
+	"example.com/verge/internal/types"
 	"github.com/spf13/cobra"
 )
 
 func versionBumpCmd() *cobra.Command {
 	var (
-		fromVersion string
-		kindStr     string
-		stageStr    string
-		ecosystem   string
-		autoDetect  bool
-		repoDir     string
-		changelog   bool
+		versionType     string
+		providerStr     string
+		versionArg      string // Base string
+		prefixArg       string // Base prefix
+		kindStr         string
+		stageStr        string
+		sequenceStr     string
 	)
 
 	cmd := &cobra.Command{
 		Use:   "bump",
-		Short: "Bump a version",
-		Long: `Compute the next version from a given version and bump kind.
-
-Kinds: major, minor, patch, prerelease, final
-
-Examples:
-	verge bump --from 1.2.3 --kind minor
-	verge bump --from 1.2.3 --kind prerelease --stage dev
-	verge bump --from 1.2.3-rc.1 --kind final
-	verge bump --from 1.2.3 --auto
-	verge bump --from 1.2.3 --kind minor --changelog --format json`,
+		Short: "Bump a version based on deterministic rules",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			if fromVersion == "" {
-				return fmt.Errorf("--from flag is required")
-			}
-
-			parser := version.NewParser()
-			v, err := parser.Parse(fromVersion)
+			cfg, err := config.Load(globalFlags.configPath)
 			if err != nil {
-				return fmt.Errorf("parsing version: %w", err)
+				return NewError(ExitConfigError, "loading config: %v", err)
 			}
 
-			var kind version.BumpKind
-
-			if autoDetect {
-				commitParser := version.NewCommitParser()
-				history, err := version.FetchCommitsSince(repoDir, fromVersion, commitParser)
-				if err != nil {
-					return fmt.Errorf("reading commit history: %w", err)
-				}
-				kind, err = history.DetectedBump()
-				if err != nil {
-					return fmt.Errorf("detecting bump kind: %w", err)
-				}
-				kindStr = string(kind)
-			} else {
-				if kindStr == "" {
-					return fmt.Errorf("--kind flag is required (or use --auto)")
-				}
-				switch kindStr {
-				case "major":
-					kind = version.BumpMajor
-				case "minor":
-					kind = version.BumpMinor
-				case "patch":
-					kind = version.BumpPatch
-				case "prerelease":
-					kind = version.BumpPrerelease
-				case "final":
-					kind = version.BumpFinal
-				default:
-					return fmt.Errorf("unknown bump kind %q (use: major, minor, patch, prerelease, final)", kindStr)
-				}
+			// CLI Overrides Config
+			if versionType != "" {
+				cfg.VersionType = versionType
+			}
+			if providerStr != "" {
+				cfg.Provider.Type = providerStr
+				cfg.Provider.Raw = nil
 			}
 
-			stage := version.StageDev
-			if stageStr != "" {
-				stage, err = version.StageFromString(stageStr)
-				if err != nil {
-					return fmt.Errorf("invalid stage: %w", err)
-				}
+			opts := domain.BumpOptions{
+				VersionStr:      versionArg,
+				Prefix:          prefixArg,
+				PrereleaseStage: stageStr,
+				BumpKind:        kindStr,
+				SequenceStr:     sequenceStr,
 			}
 
-			bumper := version.NewBumper()
-			bumped, err := bumper.Bump(v, kind, stage)
+			bumped, err := domain.Bump(cfg, opts)
 			if err != nil {
-				return fmt.Errorf("bumping version: %w", err)
+				return fmt.Errorf("bump failed: %w", err)
 			}
 
-			if ecosystem == "" {
-				ecosystem = "v-semver"
-			}
-			rendered := version.NewRenderer(ecosystem).Render(bumped)
-
-			if changelog {
-				return PrintChangelog(nil, globalFlags.field, fromVersion, bumped.String(), kindStr, "version-bump", nil)
-			}
+			parser := types.Get(cfg.VersionType)
+			rendered := parser.Render(bumped)
 
 			out := NewOutput(OutputFormat(globalFlags.format))
 			out.Field = globalFlags.field
 			data := map[string]interface{}{
-				"from":      fromVersion,
-				"kind":      kindStr,
-				"to":        bumped.String(),
-				"ecosystem": ecosystem,
-				"rendered":  rendered,
+				"kind":       kindStr,
+				"to":         bumped.String(),
+				"rendered":   rendered,
 			}
 			if stageStr != "" {
 				data["stage"] = stageStr
@@ -114,12 +68,13 @@ Examples:
 		},
 	}
 
-	cmd.Flags().StringVar(&fromVersion, "from", "", "Source version to bump from (required)")
+	cmd.Flags().StringVarP(&versionType, "type", "t", "", "Override version_type")
+	cmd.Flags().StringVarP(&providerStr, "provider", "p", "", "Override provider type")
+	cmd.Flags().StringVarP(&versionArg, "version", "v", "", "Bypass fetch and use static version to bump")
+	cmd.Flags().StringVar(&prefixArg, "prefix", "", "Prefix filter fetching the latest tracking version")
 	cmd.Flags().StringVar(&kindStr, "kind", "", "Bump kind: major, minor, patch, prerelease, final")
-	cmd.Flags().StringVar(&stageStr, "stage", "", "Prerelease stage for prerelease bumps (dev, alpha, beta, rc)")
-	cmd.Flags().StringVar(&ecosystem, "ecosystem", "v-semver", "Target format scheme for rendering (v-semver, semver, pep440, or ecosystem alias: go, terraform, containers, github-actions, python)")
-	cmd.Flags().BoolVar(&autoDetect, "auto", false, "Auto-detect bump kind from conventional commits since --from tag")
-	cmd.Flags().StringVar(&repoDir, "repo-dir", ".", "Repository directory (used with --auto)")
-	cmd.Flags().BoolVar(&changelog, "changelog", false, "Output changelog-friendly JSON instead of default output")
+	cmd.Flags().StringVar(&stageStr, "stage", "", "Prerelease stage (dev, a, b, rc)")
+	cmd.Flags().StringVarP(&sequenceStr, "sequence", "s", "", "Static sequence value to override calculators")
+
 	return cmd
 }

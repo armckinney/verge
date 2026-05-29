@@ -1,19 +1,19 @@
 package cli
 
-import "github.com/spf13/cobra"
+import (
+	"fmt"
+	"os"
+
+	"github.com/spf13/cobra"
+)
 
 func versionInfoCmd() *cobra.Command {
 	return &cobra.Command{
-		Use:   "info",
-		Short: "Show verge version info",
+		Use:   "version",
+		Short: "Show verge version",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			out := NewOutput(OutputFormat(globalFlags.format))
-			out.Field = globalFlags.field
-			return out.Print(map[string]interface{}{
-				"version": versionInfo.Version,
-				"commit":  versionInfo.Commit,
-				"date":    versionInfo.Date,
-			})
+			fmt.Fprintln(os.Stdout, versionInfo.Version)
+			return nil
 		},
 	}
 }

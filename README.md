@@ -1,64 +1,58 @@
 # Verge
 
-Version Merge at the bleeding edge.
+Verge is a deterministic, fast version generation CLI explicitly designed for pipelines and automation scenarios.
 
-`verge` is a semantic versioning CLI for parsing, comparing, bumping, and rendering versions across ecosystems.
+It acts as a single-source-of-truth semantic versioning machine that reliably fetches, sequences, and bumps versions using standard ecosystems (semver, vsemver, pep440) across disparate providers (git tags, ghcr, github releases).
 
-## Install
+## Core Principles
+1. **Deterministic Operation:** The CLI acts as a pure calculator. Give it a state, and it returns predictably formatted output strings.
+2. **Immutable Environment:** Verge operates strictly read-only. It calculates tags but never intrinsically applies them.
+3. **Pipeline First:** Native `--format json` flags and strictly defined exit codes ensure 100% interoperability with jq and bash evaluations natively.
 
-Download the latest release and install (Linux example):
+## Installation
+
+Install the Verge CLI automatically across Linux (amd64/arm64), macOS (amd64/arm64), and Windows (Git Bash/WSL) with our cross-platform installation script:
 
 ```bash
-curl -sSL https://github.com/armckinney/verge/releases/latest/download/verge-linux-amd64 -o verge
-chmod +x verge
-sudo mv verge /usr/local/bin/
-verge info
+curl -sSL https://raw.githubusercontent.com/armckinney/verge/main/install.sh | bash
 ```
 
-Replace `verge-linux-amd64` with the appropriate binary for your platform (e.g., `verge-darwin-amd64` for macOS, `verge-windows-amd64.exe` for Windows). See [GitHub Releases](https://github.com/armckinney/verge/releases) for all available downloads.
+Alternatively, you can manually download the compiled archive for your specific environment from the [GitHub Releases Page](https://github.com/armckinney/verge/releases).
 
-Install with Go:
-
-```bash
-go install example.com/verge/cmd/verge@latest
-verge info
-```
-
-## Quick Usage
-
-Parse a version:
+## Quick Examples
 
 ```bash
-verge parse v1.2.3-rc.1
-```
+# 1. Scaffold a Git-Tag configuration boilerplate
+verge ini-config --template gittag-semver
 
-Compare two versions (`10` means left is older, `11` means left is newer):
+# 2. Query the highest tag from your configured provider
+verge latest
+# Output: 1.2.3
 
-```bash
-verge compare 1.2.3 2.0.0; echo $?
-```
-
-Bump a version:
-
-```bash
-verge bump --from 1.2.3 --kind minor
-```
-
-Get current version from local git tags:
-
-```bash
-verge current
-```
-
-Use JSON output for scripting:
-
-```bash
-verge --format json latest
+# 3. Calculate next pre-release version with auto-increment
+verge bump --kind prerelease --stage dev
+# Output: 1.2.4-dev.1
 ```
 
 ## Documentation
-
-- Usage guide: [docs/usage/usage.md](docs/usage/usage.md)
-- Configuration reference: [docs/usage/configuration.md](docs/usage/configuration.md)
-- CI/CD notes: [docs/usage/cicd.md](docs/usage/cicd.md)
-- Use-case examples: [docs/usage/examples/README.md](docs/usage/examples/README.md)
+- **Configuration**
+  - [Overview](docs/usage/configuration/index.md)
+  - [Providers](docs/usage/configuration/providers.md)
+  - [Version Types](docs/usage/configuration/version_types.md)
+  - [Sequences](docs/usage/configuration/sequence.md)
+- **Commands**
+  - [CLI Index](docs/usage/commands/index.md)
+  - [verge current](docs/usage/commands/current.md)
+  - [verge latest](docs/usage/commands/latest.md)
+  - [verge bump](docs/usage/commands/bump.md)
+  - [verge ini-config](docs/usage/commands/ini-config.md)
+- **Recipes**
+  - [Container Images](docs/usage/recipes/container-images.md)
+  - [Devcontainer Features](docs/usage/recipes/devcontainer-features.md)
+  - [Python Packages](docs/usage/recipes/python.md)
+  - [Go Modules](docs/usage/recipes/go.md)
+  - [Terraform Modules & Providers](docs/usage/recipes/terraform.md)
+  - [GitHub Actions / CI](docs/usage/recipes/github-actions.md)
+- **Development**
+  - [Architecture](docs/development/architecture.md)
+  - [Product Specification](docs/development/spec.md)

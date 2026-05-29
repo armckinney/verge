@@ -2,22 +2,13 @@ package providers
 
 import "example.com/verge/internal/version"
 
-// QueryOptions controls how versions are fetched.
-type QueryOptions struct {
-	IncludePrerelease bool
-	TagPrefix         string
-	RepoDir           string
-}
-
-// VersionResult is a parsed version with metadata.
-type VersionResult struct {
-	Version *version.Version
-	Raw     string
-	Source  string
-}
-
-// VersionProvider fetches versions from a source.
+// VersionProvider defines the contract for accessing version data from a remote or local source.
 type VersionProvider interface {
 	Name() string
-	Fetch(opts QueryOptions) ([]*VersionResult, error)
+	
+	// GetLatest retrieves the absolute latest version from the source.
+	GetLatest(versionType string) (*version.Version, error)
+
+	// GetLatestSpecific retrieves the latest version matching a specific prefix (e.g., "1", "1.2", "1.2.3-a").
+	GetLatestSpecific(versionType string, prefix string) (*version.Version, error)
 }

@@ -1,19 +1,19 @@
 {
   "features": {
-    "https://github.com/armckinney/containers/releases/download/v1.0.5/devcontainer-feature-copilot.tgz": {
-      "version": "1.0.0",
-      "resolved": "https://github.com/armckinney/containers/releases/download/v1.0.5/devcontainer-feature-copilot.tgz",
-      "integrity": "sha256:5d9b502ece00b0736cfa7b7f9814b2d5af73ed5a3c0e41a705387f03e307c1c7"
+    "https://github.com/armckinney/containers/releases/download/v1.0.6/devcontainer-feature-antigravity.tgz": {
+      "version": "1.1.0",
+      "resolved": "https://github.com/armckinney/containers/releases/download/v1.0.6/devcontainer-feature-antigravity.tgz",
+      "integrity": "sha256:db09bd0ce634203c94442dae844a38ba01cb7d076327490ab92cdce7bb3a84d9"
     },
-    "https://github.com/armckinney/containers/releases/download/v1.0.5/devcontainer-feature-gemini.tgz": {
-      "version": "1.0.0",
-      "resolved": "https://github.com/armckinney/containers/releases/download/v1.0.5/devcontainer-feature-gemini.tgz",
-      "integrity": "sha256:f65c91055efde9469ed904649d7d72ae710b728fa038d823a5562ab9a4d48481"
+    "https://github.com/armckinney/containers/releases/download/v1.0.6/devcontainer-feature-copilot.tgz": {
+      "version": "1.1.0",
+      "resolved": "https://github.com/armckinney/containers/releases/download/v1.0.6/devcontainer-feature-copilot.tgz",
+      "integrity": "sha256:06c4eb495a6b464b9a591e627a1596bf11acd7d5dae3e38bccfa7e7b8a481fbe"
     },
-    "https://github.com/armckinney/containers/releases/download/v1.0.5/devcontainer-feature-vscode-customizations.tgz": {
-      "version": "1.0.0",
-      "resolved": "https://github.com/armckinney/containers/releases/download/v1.0.5/devcontainer-feature-vscode-customizations.tgz",
-      "integrity": "sha256:2c2314c188f3bd6301c5acb219d8542bbeb85637659a755ac1eec9058595ca2e"
+    "https://github.com/armckinney/containers/releases/download/v1.0.6/devcontainer-feature-vscode-customizations.tgz": {
+      "version": "1.1.0",
+      "resolved": "https://github.com/armckinney/containers/releases/download/v1.0.6/devcontainer-feature-vscode-customizations.tgz",
+      "integrity": "sha256:a8d0ce792a18c80a5d10a142258ff2c6da5631f1f92e931ab01bcb48772c81fe"
     }
   }
 }

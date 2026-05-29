@@ -44,10 +44,9 @@ func init() {
 	rootCmd.PersistentFlags().StringVar(&globalFlags.field, "field", "", "Print a single top-level field from structured command output")
 
 	rootCmd.AddCommand(
-		versionParseCmd(),
-		versionCompareCmd(),
 		versionCurrentCmd(),
 		versionLatestCmd(),
+		iniConfigCmd(),
 		versionBumpCmd(),
 		versionInfoCmd(),
 	)

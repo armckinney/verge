@@ -1,8 +1,10 @@
 package main
 
 import (
-	"example.com/verge/internal/cli"
+	"errors"
 	"os"
+
+	"example.com/verge/internal/cli"
 )
 
 // Version info injected by goreleaser ldflags
@@ -15,6 +17,10 @@ var (
 func main() {
 	cli.SetVersionInfo(Version, Commit, Date)
 	if err := cli.Execute(); err != nil {
+		var cliErr *cli.CLIError
+		if errors.As(err, &cliErr) {
+			os.Exit(cliErr.Code)
+		}
 		os.Exit(1)
 	}
 }

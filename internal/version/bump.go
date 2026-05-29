@@ -34,24 +34,19 @@ func (b *defaultBumper) Bump(v *Version, kind BumpKind, stage Stage) (*Version, 
 		result.SequenceType = ""
 	case BumpPrerelease:
 		if v.Stage == StageFinal {
-			// Bump patch, set stage and seq=1
+			// Bump patch, set stage and seq=nil
 			result.Patch++
 			result.Stage = stage
-			result.Sequence = 1
-			result.SequenceType = SeqTypeNumeric
+			result.Sequence = nil
+			result.SequenceType = ""
 		} else if v.Stage == stage {
-			// Same stage: increment sequence
-			switch seq := v.Sequence.(type) {
-			case int:
-				result.Sequence = seq + 1
-			default:
-				return nil, fmt.Errorf("cannot increment non-numeric sequence: %v", v.Sequence)
-			}
+			// Same stage: copy sequence as-is, let sequence calculator handle it
+			result.Sequence = v.Sequence
 		} else {
-			// Different stage: keep core, change stage, seq=1
+			// Different stage: keep core, change stage, seq=nil
 			result.Stage = stage
-			result.Sequence = 1
-			result.SequenceType = SeqTypeNumeric
+			result.Sequence = nil
+			result.SequenceType = ""
 		}
 	case BumpFinal:
 		result.Stage = StageFinal

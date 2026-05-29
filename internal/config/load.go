@@ -35,21 +35,22 @@ func Load(configPath string) (*Config, error) {
 }
 
 func applyEnvOverrides(cfg *Config) {
-	if v := os.Getenv("VERGE_ECOSYSTEM"); v != "" {
-		cfg.Ecosystem = v
+	if v := os.Getenv("VERGE_VERSION_TYPE"); v != "" {
+		cfg.VersionType = v
 	}
-	if v := os.Getenv("VERGE_FORMAT_OUTPUT"); v != "" {
-		cfg.Format.Output = v
-	}
-	if v := os.Getenv("VERGE_TAG_PREFIX"); v != "" {
-		cfg.Format.TagPrefix = v
+	if v := os.Getenv("VERGE_PROVIDER_TYPE"); v != "" {
+		cfg.Provider.Type = v
 	}
 }
 
 func Validate(cfg *Config) []error {
 	var errs []error
-	if cfg.Version != 1 {
-		errs = append(errs, fmt.Errorf("unsupported config version: %d", cfg.Version))
+	var validTypes = map[string]bool{"semver": true, "vsemver": true, "pep440": true}
+	if !validTypes[cfg.VersionType] {
+		errs = append(errs, fmt.Errorf("invalid version_type: %q (must be semver, vsemver, or pep440)", cfg.VersionType))
+	}
+	if cfg.Provider.Type == "" {
+		errs = append(errs, fmt.Errorf("provider type cannot be empty"))
 	}
 	return errs
 }

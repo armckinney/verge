@@ -4,11 +4,6 @@ Verge is a deterministic, fast version generation CLI explicitly designed for pi
 
 It acts as a single-source-of-truth semantic versioning machine that reliably fetches, sequences, and bumps versions using standard ecosystems (semver, vsemver, pep440) across disparate providers (git tags, ghcr, github releases).
 
-## Core Principles
-1. **Deterministic Operation:** The CLI acts as a pure calculator. Give it a state, and it returns predictably formatted output strings.
-2. **Immutable Environment:** Verge operates strictly read-only. It calculates tags but never intrinsically applies them.
-3. **Pipeline First:** Native `--format json` flags and strictly defined exit codes ensure 100% interoperability with jq and bash evaluations natively.
-
 ## Installation
 
 Install the Verge CLI automatically across Linux (amd64/arm64), macOS (amd64/arm64), and Windows (Git Bash/WSL) with our cross-platform installation script:
@@ -18,6 +13,10 @@ curl -sSL https://raw.githubusercontent.com/armckinney/verge/main/install.sh | b
 ```
 
 Alternatively, you can manually download the compiled archive for your specific environment from the [GitHub Releases Page](https://github.com/armckinney/verge/releases).
+
+## Uninstall
+
+For comprehensive platform-by-path uninstall instructions, see [Uninstalling Verge CLI](docs/usage/uninstall.md).
 
 ## Quick Examples
 
@@ -46,6 +45,7 @@ verge bump --kind prerelease --stage dev
   - [verge latest](docs/usage/commands/latest.md)
   - [verge bump](docs/usage/commands/bump.md)
   - [verge ini-config](docs/usage/commands/ini-config.md)
+  - [Uninstalling Verge](docs/usage/uninstall.md)
 - **Recipes**
   - [Container Images](docs/usage/recipes/container-images.md)
   - [Devcontainer Features](docs/usage/recipes/devcontainer-features.md)

@@ -1,5 +1,5 @@
 # Verge CLI Self-Versioning Configuration
-# Configures Verge to manage its own releases and test pseudo-versions using the Go module standard format.
+# Decoupled from GitHub API to prevent race conditions and rate-limits by using the local gittag provider.
 
 version_type: vsemver
 
@@ -11,9 +11,7 @@ sequence:
   type: increment
 
 provider:
-  type: ghrelease
-  ghrelease:
-    owner: "armckinney"
-    repo: "verge"
+  type: gittag
+  gittag:
+    repo_dir: "."
     include_prerelease: true
-    include_drafts: false

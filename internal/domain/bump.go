@@ -40,7 +40,7 @@ func Bump(cfg *config.Config, opts BumpOptions) (*version.Version, error) {
 		latestOpts := LatestOptions{
 			Prefix: opts.Prefix,
 		}
-		
+
 		v, err := GetLatest(cfg, latestOpts)
 		if err != nil {
 			// Init behavior if no version exists

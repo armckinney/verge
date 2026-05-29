@@ -58,7 +58,7 @@ func versionLatestCmd() *cobra.Command {
 
 	cmd.Flags().StringVarP(&versionType, "type", "t", "", "Override version_type")
 	cmd.Flags().StringVarP(&providerStr, "provider", "p", "", "Override provider type")
-	cmd.Flags().StringVarP(&versionArg, "version", "v", "", "Prefix filter for version (e.g. 1.2)")
+	cmd.Flags().StringVar(&versionArg, "version", "", "Prefix filter for version (e.g. 1.2)")
 
 	return cmd
 }

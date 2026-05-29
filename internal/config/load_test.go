@@ -55,7 +55,7 @@ provider:
 	if cfg.Provider.Type != "ghcr" {
 		t.Errorf("expected ghcr provider, got %s", cfg.Provider.Type)
 	}
-	
+
 	// Test unmarshalling of nested raw map
 	if ghcrRaw, ok := cfg.Provider.Raw["ghcr"].(map[string]interface{}); ok {
 		if image, ok := ghcrRaw["image"].(string); ok {

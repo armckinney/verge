@@ -1,34 +1,19 @@
-version: 1
+# Verge CLI Self-Versioning Configuration
+# Configures Verge to manage its own releases and test pseudo-versions using the Go module standard format.
 
-ecosystem: v-semver
+version_type: vsemver
 
-format:
-  input: auto
-  output: auto
-  tagPrefix: v
-  sequenceInterpreter: auto
-
-sources:
-  precedence:
-    - git-tags
-  git-tags:
-    enabled: true
-    fetch: false
-    includePrerelease: true
-    ecosystemParsing: v-semver
+default:
+  bump_kind: prerelease
+  prerelease_stage: dev
 
 sequence:
-  hashLength: 7
-  allowContentHash: true
-  ghBuildPattern: "gh-"
+  type: increment
 
-rules:
-  prereleaseStage: dev
-  allowMajorZeroBreaking: true
-  defaultBump: patch
-
-autoBump:
-  conventionalCommits: true
-  breakingTokens:
-    - "BREAKING CHANGE"
-    - "!:"
+provider:
+  type: ghrelease
+  ghrelease:
+    owner: "armckinney"
+    repo: "verge"
+    include_prerelease: true
+    include_drafts: false

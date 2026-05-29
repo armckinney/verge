@@ -3,8 +3,8 @@ package integration_test
 import (
 	"testing"
 
-	"example.com/verge/internal/domain"
 	"example.com/verge/internal/config"
+	"example.com/verge/internal/domain"
 )
 
 func TestGitTagsProvider(t *testing.T) {

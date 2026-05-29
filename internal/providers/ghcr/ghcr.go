@@ -46,7 +46,7 @@ func (p *Provider) fetchAndParse(versionType string) ([]*version.Version, error)
 	// To get tags from ghcr.io:
 	// GET https://ghcr.io/v2/<package>/tags/list
 	url := fmt.Sprintf("https://ghcr.io/v2/%s/tags/list", pkg)
-	
+
 	req, err := http.NewRequestWithContext(context.Background(), http.MethodGet, url, nil)
 	if err != nil {
 		return nil, fmt.Errorf("creating request: %w", err)
@@ -123,12 +123,12 @@ func (p *Provider) GetLatestSpecific(versionType string, prefix string) (*versio
 	if err != nil {
 		return nil, err
 	}
-	
+
 	for _, v := range results {
 		if strings.HasPrefix(v.Original, prefix) || strings.HasPrefix(v.Core(), prefix) {
 			return v, nil
 		}
-		
+
 		if versionType == "vsemver" && strings.HasPrefix(v.Original, "v"+prefix) {
 			return v, nil
 		}

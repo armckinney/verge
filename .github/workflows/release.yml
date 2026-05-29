@@ -2,8 +2,8 @@ name: Release
 
 on:
   push:
-    tags:
-      - 'v*'
+    branches:
+      - main
 
 permissions:
   contents: write
@@ -12,13 +12,38 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout Source
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: actions/setup-go@v5
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
-      - uses: goreleaser/goreleaser-action@v6
+
+      - name: Build Temporary Verge CLI
+        run: |
+          go build -o verge cmd/verge/main.go
+          ./verge --help
+
+      - name: Calculate and Push Release Tag
+        id: tag
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # 1. Fetch history from ghrelease, calculate next vsemver patch version
+          TAG=$(./verge bump --kind patch)
+          echo "Resolved next release version: ${TAG}"
+          
+          # 2. Tag the repository and push to GitHub
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git tag "${TAG}"
+          git push origin "${TAG}"
+
+      - name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v6
         with:
           version: latest
           args: release --clean

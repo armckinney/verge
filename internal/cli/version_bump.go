@@ -11,13 +11,13 @@ import (
 
 func versionBumpCmd() *cobra.Command {
 	var (
-		versionType     string
-		providerStr     string
-		versionArg      string // Base string
-		prefixArg       string // Base prefix
-		kindStr         string
-		stageStr        string
-		sequenceStr     string
+		versionType string
+		providerStr string
+		versionArg  string // Base string
+		prefixArg   string // Base prefix
+		kindStr     string
+		stageStr    string
+		sequenceStr string
 	)
 
 	cmd := &cobra.Command{
@@ -57,9 +57,9 @@ func versionBumpCmd() *cobra.Command {
 			out := NewOutput(OutputFormat(globalFlags.format))
 			out.Field = globalFlags.field
 			data := map[string]interface{}{
-				"kind":       kindStr,
-				"to":         bumped.String(),
-				"rendered":   rendered,
+				"kind":     kindStr,
+				"to":       bumped.String(),
+				"rendered": rendered,
 			}
 			if stageStr != "" {
 				data["stage"] = stageStr
@@ -70,7 +70,7 @@ func versionBumpCmd() *cobra.Command {
 
 	cmd.Flags().StringVarP(&versionType, "type", "t", "", "Override version_type")
 	cmd.Flags().StringVarP(&providerStr, "provider", "p", "", "Override provider type")
-	cmd.Flags().StringVarP(&versionArg, "version", "v", "", "Bypass fetch and use static version to bump")
+	cmd.Flags().StringVar(&versionArg, "version", "", "Bypass fetch and use static version to bump")
 	cmd.Flags().StringVar(&prefixArg, "prefix", "", "Prefix filter fetching the latest tracking version")
 	cmd.Flags().StringVar(&kindStr, "kind", "", "Bump kind: major, minor, patch, prerelease, final")
 	cmd.Flags().StringVar(&stageStr, "stage", "", "Prerelease stage (dev, a, b, rc)")

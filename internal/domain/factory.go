@@ -1,12 +1,12 @@
 package domain
 
 import (
-	"fmt"
 	"example.com/verge/internal/config"
 	"example.com/verge/internal/providers"
-	"example.com/verge/internal/providers/gittag"
-	"example.com/verge/internal/providers/ghrelease"
 	"example.com/verge/internal/providers/ghcr"
+	"example.com/verge/internal/providers/ghrelease"
+	"example.com/verge/internal/providers/gittag"
+	"fmt"
 	"gopkg.in/yaml.v3"
 )
 

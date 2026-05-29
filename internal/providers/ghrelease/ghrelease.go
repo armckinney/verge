@@ -19,10 +19,10 @@ const githubAPIBase = "https://api.github.com"
 
 // Config represents the raw config block passed for this provider.
 type Config struct {
-	Owner             string        `yaml:"owner"`
-	Repo              string        `yaml:"repo"`
-	IncludePrerelease bool          `yaml:"include_prerelease"`
-	IncludeDrafts     bool          `yaml:"include_drafts"`
+	Owner             string `yaml:"owner"`
+	Repo              string `yaml:"repo"`
+	IncludePrerelease bool   `yaml:"include_prerelease"`
+	IncludeDrafts     bool   `yaml:"include_drafts"`
 }
 
 type Provider struct {
@@ -127,12 +127,12 @@ func (p *Provider) GetLatestSpecific(versionType string, prefix string) (*versio
 	if err != nil {
 		return nil, err
 	}
-	
+
 	for _, v := range results {
 		if strings.HasPrefix(v.Original, prefix) || strings.HasPrefix(v.Core(), prefix) {
 			return v, nil
 		}
-		
+
 		if versionType == "vsemver" && strings.HasPrefix(v.Original, "v"+prefix) {
 			return v, nil
 		}

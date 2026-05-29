@@ -5,7 +5,7 @@ import "example.com/verge/internal/version"
 // VersionProvider defines the contract for accessing version data from a remote or local source.
 type VersionProvider interface {
 	Name() string
-	
+
 	// GetLatest retrieves the absolute latest version from the source.
 	GetLatest(versionType string) (*version.Version, error)
 

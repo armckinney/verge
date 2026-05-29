@@ -94,7 +94,7 @@ func (p *Provider) GetLatestSpecific(versionType string, prefix string) (*versio
 	if err != nil {
 		return nil, err
 	}
-	
+
 	// Example of matching specific prefix: 1.2
 	for _, v := range results {
 		// Does original match prefix?
@@ -103,7 +103,7 @@ func (p *Provider) GetLatestSpecific(versionType string, prefix string) (*versio
 		if strings.HasPrefix(v.Original, prefix) || strings.HasPrefix(v.Core(), prefix) {
 			return v, nil
 		}
-		
+
 		// If vsemver was used, prefix "1.2" might mean v1.2
 		if versionType == "vsemver" && strings.HasPrefix(v.Original, "v"+prefix) {
 			return v, nil

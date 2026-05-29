@@ -53,6 +53,7 @@ verge bump --kind prerelease --stage dev
   - [Go Modules](docs/usage/recipes/go.md)
   - [Terraform Modules & Providers](docs/usage/recipes/terraform.md)
   - [GitHub Actions / CI](docs/usage/recipes/github-actions.md)
+  - [Central CI/CD Reusable Workflows Guide](docs/usage/cicd-integration.md)
 - **Development**
   - [Architecture](docs/development/architecture.md)
   - [Product Specification](docs/development/spec.md)

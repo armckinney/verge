@@ -95,6 +95,7 @@ For a complete step-by-step setup walkthrough of calling this reusable workflow,
   - [verge current](docs/usage/commands/current.md)
   - [verge latest](docs/usage/commands/latest.md)
   - [verge bump](docs/usage/commands/bump.md)
+  - [verge parse](docs/usage/commands/parse.md)
   - [verge init](docs/usage/commands/init.md)
 - **Recipes**
   - [Container Images](docs/usage/recipes/container-images.md)

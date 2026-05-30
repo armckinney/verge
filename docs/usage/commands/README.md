@@ -12,7 +12,8 @@ These flags are persistent and available across all commands:
 * **`-f, --format string`**: Output serialization format: `text` or `json`. (Default: `"text"`).
   * **`text`**: Exclusively prints the raw calculated version string directly to `stdout`. All logs go to `stderr`.
   * **`json`**: Outputs structured JSON metadata containing rich execution details (e.g., `version`, `previous`, `bump_kind`, `type`, `provider`).
-* **`--field string`**: Extract a single top-level field from the structured command output (extremely useful in JSON mode to pluck variables).
+* **`--json`**: Boolean flag to output in JSON format (convenient shortcut for `--format json`).
+* **`--field string`**: Extract a single top-level field from the structured command output (extremely useful in JSON/structured mode to pluck variables).
 * **`-v, --verbose`**: Enables detailed verbose logging on `stderr`.
 * **`--no-cache`**: Disables transparent remote provider caching (e.g., for GitHub Releases or GHCR) and forces a fresh network lookup. By default, remote queries are cached securely in `~/.cache/verge/` for 5 minutes to eliminate GitHub API rate limits.
 
@@ -35,4 +36,5 @@ Verge uses standard exit codes to signal status to CI automation tasks:
 * [`verge current`](current.md): Retrieves the currently active locally-tracked version.
 * [`verge latest`](latest.md): Queries the active provider for the highest recorded version.
 * [`verge bump`](bump.md): Computes and outputs the next version based on configuration and stage instructions.
+* [`verge parse`](parse.md): Parses a static version string into structured component metadata.
 * [`verge init`](init.md): Generates a boilerplate config file based on typical ecosystem templates.

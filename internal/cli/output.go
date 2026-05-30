@@ -21,11 +21,27 @@ type Output struct {
 }
 
 func NewOutput(format OutputFormat) *Output {
+	if globalFlags.json {
+		format = FormatJSON
+	}
 	return &Output{Format: format, Writer: os.Stdout}
 }
 
 // Print outputs data strictly based on spec 009.
 func (o *Output) Print(data map[string]interface{}) error {
+	if o.Field != "" {
+		val, ok := data[o.Field]
+		if !ok {
+			return fmt.Errorf("field %q not found in output", o.Field)
+		}
+		if o.Format == FormatJSON {
+			enc := json.NewEncoder(o.Writer)
+			return enc.Encode(val)
+		}
+		fmt.Fprintln(o.Writer, val)
+		return nil
+	}
+
 	switch o.Format {
 	case FormatJSON:
 		enc := json.NewEncoder(o.Writer)

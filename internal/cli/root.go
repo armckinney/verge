@@ -17,6 +17,7 @@ var (
 		format     string
 		field      string
 		noCache    bool
+		json       bool
 	}
 )
 
@@ -42,6 +43,7 @@ func init() {
 	rootCmd.PersistentFlags().BoolVarP(&globalFlags.verbose, "verbose", "v", false, "Enable verbose output")
 	rootCmd.PersistentFlags().StringVarP(&globalFlags.configPath, "config", "c", "", "Config file path (default: .verge.yaml)")
 	rootCmd.PersistentFlags().StringVarP(&globalFlags.format, "format", "f", "text", "Output format: text or json")
+	rootCmd.PersistentFlags().BoolVar(&globalFlags.json, "json", false, "Output in JSON format")
 	rootCmd.PersistentFlags().StringVar(&globalFlags.field, "field", "", "Print a single top-level field from structured command output")
 	rootCmd.PersistentFlags().BoolVar(&globalFlags.noCache, "no-cache", false, "Disable remote provider caching and force fresh lookup")
 
@@ -51,5 +53,6 @@ func init() {
 		initCmd(),
 		versionBumpCmd(),
 		versionInfoCmd(),
+		versionParseCmd(),
 	)
 }

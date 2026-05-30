@@ -83,6 +83,8 @@ If you are using our organization's central reusable workflows, you can utilize 
 For a complete step-by-step setup walkthrough of calling this reusable workflow, refer to our [Central CI/CD Reusable Workflows Guide](docs/usage/cicd-integration.md).
 
 ## Documentation
+- **General**
+  - [Installing & Uninstalling](docs/usage/install.md)
 - **Configuration**
   - [Overview](docs/usage/configuration/index.md)
   - [Providers](docs/usage/configuration/providers.md)
@@ -94,7 +96,6 @@ For a complete step-by-step setup walkthrough of calling this reusable workflow,
   - [verge latest](docs/usage/commands/latest.md)
   - [verge bump](docs/usage/commands/bump.md)
   - [verge init](docs/usage/commands/init.md)
-  - [Uninstalling Verge](docs/usage/uninstall.md)
 - **Recipes**
   - [Container Images](docs/usage/recipes/container-images.md)
   - [Devcontainer Features](docs/usage/recipes/devcontainer-features.md)

@@ -42,24 +42,30 @@ esac
 
 log "Detected Environment: OS=${OS}, Architecture=${ARCH}"
 
-# 3. Retrieve Latest Version
-log "Querying latest release version from GitHub..."
-REDIRECT_URL="$(curl -sIL -o /dev/null -w '%{url_effective}' "https://github.com/${REPO}/releases/latest")"
-TAG="${REDIRECT_URL##*/}"
+# 3. Retrieve Version
+if [[ -n "${VERGE_VERSION:-}" ]]; then
+  TAG="${VERGE_VERSION}"
+  VERSION="${TAG#v}"
+  log "Using specified version: v${VERSION}"
+else
+  log "Querying latest release version from GitHub..."
+  REDIRECT_URL="$(curl -sIL -o /dev/null -w '%{url_effective}' "https://github.com/${REPO}/releases/latest")"
+  TAG="${REDIRECT_URL##*/}"
 
-if [[ -z "${TAG}" || "${TAG}" == "latest" ]]; then
-  log "Fallback to GitHub API for latest release..."
-  TAG="$(curl -s "https://api.github.com/repos/${REPO}/releases/latest" | grep '"tag_name":' | sed -E 's/.*"tag_name":\s*"v?([0-9.]+)"/\1/g' | tr -d 'v' || echo "")"
+  if [[ -z "${TAG}" || "${TAG}" == "latest" ]]; then
+    log "Fallback to GitHub API for latest release..."
+    TAG="$(curl -s "https://api.github.com/repos/${REPO}/releases/latest" | grep '"tag_name":' | sed -E 's/.*"tag_name":\s*"v?([0-9.]+)"/\1/g' | tr -d 'v' || echo "")"
+  fi
+
+  # Strip potential 'v' prefix for release download formatting, but keep it for tags
+  VERSION="${TAG#v}"
+  if [[ -z "${VERSION}" ]]; then
+    log_err "Failed to resolve latest version tag."
+    exit 1
+  fi
+
+  log "Resolved Latest Version: v${VERSION}"
 fi
-
-# Strip potential 'v' prefix for release download formatting, but keep it for tags
-VERSION="${TAG#v}"
-if [[ -z "${VERSION}" ]]; then
-  log_err "Failed to resolve latest version tag."
-  exit 1
-fi
-
-log "Resolved Latest Version: v${VERSION}"
 
 # 4. Formulate Archive URL
 ARCHIVE_NAME="${PROJECT_NAME}_${VERSION}_${OS}_${ARCH}.tar.gz"

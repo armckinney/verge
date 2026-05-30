@@ -26,6 +26,7 @@ verge bump [flags]
   * `final`: Promotes a pre-release version directly to its final release core (`1.2.3-rc.2` $\rightarrow$ `1.2.3`).
 * **`--stage string`**: The target pre-release stage label (`dev` | `a` | `b` | `rc`). Defaults to the value set in `.verge.yaml`.
 * **`-s, --sequence string`**: Dynamic runtime sequence override. Bypasses the configured sequence calculator and directly injects the supplied value.
+* **`--provider-config strings`**: Comma-separated `key=value` pairs to provide fine-grained inline overrides of provider settings (e.g., `--provider-config include_prerelease=false,repo_dir="."`).
 
 ---
 
@@ -53,6 +54,12 @@ graph TD
     WipeSequence --> Output[Render and print to stdout]
     RunCalculator --> Output
 ```
+
+---
+
+## Stable Release Bump Behavior with Prereleases
+
+When executing a stable component bump (`major`, `minor`, or `patch`), Verge automatically ignores pre-release tags when resolving the latest historical version from the tracking provider (effectively setting `include_prerelease: false` temporarily during version resolution). This prevents intermediate pre-release tags (e.g. `v1.2.4-dev.5` on top of `v1.2.3`) from incorrectly acting as the base for stable bumps. Pre-release tags are only considered when the bump kind is `prerelease` or `final`.
 
 ---
 
@@ -118,4 +125,11 @@ $ verge bump --version 1.2.3-dev.4 --format json
   "to": "1.2.3-dev.5",
   "rendered": "1.2.3-dev.5"
 }
+```
+
+### 6. Overriding Provider Config Inline
+Provide fine-grained inline overrides directly to the CLI command:
+```bash
+$ verge bump --kind patch --provider-config include_prerelease=false,repo_dir="."
+v1.2.4
 ```

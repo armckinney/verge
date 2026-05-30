@@ -11,9 +11,10 @@ import (
 
 func versionLatestCmd() *cobra.Command {
 	var (
-		versionType string
-		providerStr string
-		versionArg  string
+		versionType    string
+		providerStr    string
+		versionArg     string
+		providerConfig []string
 	)
 
 	cmd := &cobra.Command{
@@ -32,6 +33,12 @@ func versionLatestCmd() *cobra.Command {
 			if providerStr != "" {
 				cfg.Provider.Type = providerStr
 				cfg.Provider.Raw = nil
+			}
+
+			// Apply inline provider config overrides
+			if len(providerConfig) > 0 {
+				overrides := config.ParseOverrides(providerConfig)
+				config.MergeOverrides(&cfg.Provider, overrides)
 			}
 
 			opts := domain.LatestOptions{
@@ -60,6 +67,7 @@ func versionLatestCmd() *cobra.Command {
 	cmd.Flags().StringVarP(&versionType, "type", "t", "", "Override version_type")
 	cmd.Flags().StringVarP(&providerStr, "provider", "p", "", "Override provider type")
 	cmd.Flags().StringVar(&versionArg, "version", "", "Prefix filter for version (e.g. 1.2)")
+	cmd.Flags().StringSliceVar(&providerConfig, "provider-config", nil, "Provider config overrides (e.g. key=val)")
 
 	return cmd
 }

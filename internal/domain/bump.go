@@ -28,37 +28,6 @@ func Bump(cfg *config.Config, opts BumpOptions) (*version.Version, error) {
 		return nil, fmt.Errorf("invalid version_type: %s", cfg.VersionType)
 	}
 
-	if opts.VersionStr != "" {
-		// Bypass fetching: process linearly from string
-		v, err := parser.Parse(opts.VersionStr)
-		if err != nil {
-			return nil, fmt.Errorf("failed to parse explicit version %q: %w", opts.VersionStr, err)
-		}
-		baseVersion = v
-	} else {
-		// Need to fetch from provider to know what to bump
-		latestOpts := LatestOptions{
-			Prefix: opts.Prefix,
-		}
-
-		v, err := GetLatest(cfg, latestOpts)
-		if err != nil {
-			// Init behavior if no version exists
-			// "Implement Initialization Behaviors: If a version or sequence doesn't exist, calculate the initial state safely (e.g., default to 0.1.0 for first time use)."
-			baseVersion = &version.Version{
-				Major: 0,
-				Minor: 1,
-				Patch: 0,
-				Stage: version.StageFinal,
-			}
-		} else {
-			baseVersion = v
-		}
-	}
-
-	// 2. Perform the Bump
-	bumper := version.NewBumper()
-
 	// Priority: CLI > Config File > Default
 	kindStr := opts.BumpKind
 	if kindStr == "" {
@@ -80,6 +49,78 @@ func Bump(cfg *config.Config, opts BumpOptions) (*version.Version, error) {
 	default:
 		return nil, fmt.Errorf("unknown bump kind: %s", kindStr)
 	}
+
+	if opts.VersionStr != "" {
+		// Bypass fetching: process linearly from string
+		v, err := parser.Parse(opts.VersionStr)
+		if err != nil {
+			return nil, fmt.Errorf("failed to parse explicit version %q: %w", opts.VersionStr, err)
+		}
+		baseVersion = v
+	} else {
+		// Need to fetch from provider to know what to bump
+		latestOpts := LatestOptions{
+			Prefix: opts.Prefix,
+		}
+
+		// If the bump kind is stable ("major", "minor", "patch"), temporarily disable include_prerelease
+		var originalIncludePrerelease interface{}
+		var hasOriginal bool
+		var usingNested bool
+
+		if kindStr == "major" || kindStr == "minor" || kindStr == "patch" {
+			if cfg.Provider.Raw == nil {
+				cfg.Provider.Raw = make(map[string]interface{})
+			}
+			if nested, ok := cfg.Provider.Raw[cfg.Provider.Type].(map[string]interface{}); ok {
+				originalIncludePrerelease, hasOriginal = nested["include_prerelease"]
+				usingNested = true
+				nested["include_prerelease"] = false
+			} else {
+				originalIncludePrerelease, hasOriginal = cfg.Provider.Raw["include_prerelease"]
+				cfg.Provider.Raw["include_prerelease"] = false
+			}
+		}
+
+		v, err := GetLatest(cfg, latestOpts)
+
+		// Restore original include_prerelease setting
+		if kindStr == "major" || kindStr == "minor" || kindStr == "patch" {
+			if cfg.Provider.Raw != nil {
+				if usingNested {
+					if nested, ok := cfg.Provider.Raw[cfg.Provider.Type].(map[string]interface{}); ok {
+						if hasOriginal {
+							nested["include_prerelease"] = originalIncludePrerelease
+						} else {
+							delete(nested, "include_prerelease")
+						}
+					}
+				} else {
+					if hasOriginal {
+						cfg.Provider.Raw["include_prerelease"] = originalIncludePrerelease
+					} else {
+						delete(cfg.Provider.Raw, "include_prerelease")
+					}
+				}
+			}
+		}
+
+		if err != nil {
+			// Init behavior if no version exists
+			// "Implement Initialization Behaviors: If a version or sequence doesn't exist, calculate the initial state safely (e.g., default to 0.1.0 for first time use)."
+			baseVersion = &version.Version{
+				Major: 0,
+				Minor: 1,
+				Patch: 0,
+				Stage: version.StageFinal,
+			}
+		} else {
+			baseVersion = v
+		}
+	}
+
+	// 2. Perform the Bump
+	bumper := version.NewBumper()
 
 	stageStr := opts.PrereleaseStage
 	if stageStr == "" {

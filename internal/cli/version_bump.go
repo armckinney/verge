@@ -11,13 +11,14 @@ import (
 
 func versionBumpCmd() *cobra.Command {
 	var (
-		versionType string
-		providerStr string
-		versionArg  string // Base string
-		prefixArg   string // Base prefix
-		kindStr     string
-		stageStr    string
-		sequenceStr string
+		versionType    string
+		providerStr    string
+		versionArg     string // Base string
+		prefixArg      string // Base prefix
+		kindStr        string
+		stageStr       string
+		sequenceStr    string
+		providerConfig []string
 	)
 
 	cmd := &cobra.Command{
@@ -37,6 +38,12 @@ func versionBumpCmd() *cobra.Command {
 			if providerStr != "" {
 				cfg.Provider.Type = providerStr
 				cfg.Provider.Raw = nil
+			}
+
+			// Apply inline provider config overrides
+			if len(providerConfig) > 0 {
+				overrides := config.ParseOverrides(providerConfig)
+				config.MergeOverrides(&cfg.Provider, overrides)
 			}
 
 			opts := domain.BumpOptions{
@@ -76,6 +83,7 @@ func versionBumpCmd() *cobra.Command {
 	cmd.Flags().StringVar(&kindStr, "kind", "", "Bump kind: major, minor, patch, prerelease, final")
 	cmd.Flags().StringVar(&stageStr, "stage", "", "Prerelease stage (dev, a, b, rc)")
 	cmd.Flags().StringVarP(&sequenceStr, "sequence", "s", "", "Static sequence value to override calculators")
+	cmd.Flags().StringSliceVar(&providerConfig, "provider-config", nil, "Provider config overrides (e.g. key=val)")
 
 	return cmd
 }

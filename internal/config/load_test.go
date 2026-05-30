@@ -69,3 +69,94 @@ provider:
 		t.Errorf("expected ghcr raw config to be available and typed")
 	}
 }
+
+func TestParseOverrides(t *testing.T) {
+	pairs := []string{
+		"bool_true=true",
+		"bool_false=false",
+		"int_val=42",
+		"str_val=hello",
+		"invalid-pair",
+	}
+
+	out := ParseOverrides(pairs)
+
+	if out["bool_true"] != true {
+		t.Errorf("expected bool_true to be true, got %v", out["bool_true"])
+	}
+	if out["bool_false"] != false {
+		t.Errorf("expected bool_false to be false, got %v", out["bool_false"])
+	}
+	if out["int_val"] != 42 {
+		t.Errorf("expected int_val to be 42, got %v", out["int_val"])
+	}
+	if out["str_val"] != "hello" {
+		t.Errorf("expected str_val to be 'hello', got %v", out["str_val"])
+	}
+	if _, ok := out["invalid-pair"]; ok {
+		t.Errorf("expected invalid-pair to be ignored")
+	}
+}
+
+func TestMergeOverrides(t *testing.T) {
+	t.Run("Flat Merge", func(t *testing.T) {
+		raw := &ProviderRaw{
+			Type: "gittag",
+			Raw: map[string]interface{}{
+				"include_prerelease": true,
+				"other_field":        "value",
+			},
+		}
+
+		overrides := map[string]interface{}{
+			"include_prerelease": false,
+			"new_field":          123,
+		}
+
+		MergeOverrides(raw, overrides)
+
+		if raw.Raw["include_prerelease"] != false {
+			t.Errorf("expected include_prerelease to be false, got %v", raw.Raw["include_prerelease"])
+		}
+		if raw.Raw["other_field"] != "value" {
+			t.Errorf("expected other_field to remain 'value', got %v", raw.Raw["other_field"])
+		}
+		if raw.Raw["new_field"] != 123 {
+			t.Errorf("expected new_field to be 123, got %v", raw.Raw["new_field"])
+		}
+	})
+
+	t.Run("Nested Merge", func(t *testing.T) {
+		raw := &ProviderRaw{
+			Type: "gittag",
+			Raw: map[string]interface{}{
+				"gittag": map[string]interface{}{
+					"include_prerelease": true,
+					"other_field":        "value",
+				},
+			},
+		}
+
+		overrides := map[string]interface{}{
+			"include_prerelease": false,
+			"new_field":          123,
+		}
+
+		MergeOverrides(raw, overrides)
+
+		nested, ok := raw.Raw["gittag"].(map[string]interface{})
+		if !ok {
+			t.Fatalf("expected raw.Raw[\"gittag\"] to be map[string]interface{}")
+		}
+
+		if nested["include_prerelease"] != false {
+			t.Errorf("expected nested include_prerelease to be false, got %v", nested["include_prerelease"])
+		}
+		if nested["other_field"] != "value" {
+			t.Errorf("expected nested other_field to remain 'value', got %v", nested["other_field"])
+		}
+		if nested["new_field"] != 123 {
+			t.Errorf("expected nested new_field to be 123, got %v", nested["new_field"])
+		}
+	})
+}

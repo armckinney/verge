@@ -70,3 +70,21 @@ Container registries require authentication to pull tag listings. Ensure the env
 If a provider queries a target (local or remote) and finds **no valid versions** matching the active parsing rules, Verge initiates the **initialization fallback**:
 * For `verge latest`, an error is returned.
 * For `verge bump`, the CLI safely assumes an initial version state starting at `0.1.0` (or `v0.1.0` / `0.1.0dev1` depending on `version_type`) and runs the bump calculations from there.
+
+---
+
+## Runtime Provider Config Overrides
+
+While `.verge.yaml` defines persistent configuration, you can dynamically override individual provider settings at runtime using the `--provider-config` CLI flag. This flag is supported by both the `bump` and `latest` commands.
+
+Accepting comma-separated `key=value` pairs, it allows you to dynamically adjust options like `include_prerelease` or `repo_dir` without editing files:
+
+```bash
+verge latest --provider-config include_prerelease=true,repo_dir="/tmp/project"
+```
+
+## Stable Release Bump Behavior
+
+When performing stable component bumps (`major`, `minor`, or `patch`), Verge enforces a deterministic constraint: it **always ignores pre-release tags** during history resolution. 
+
+This means that if your active provider has `include_prerelease: true` (either in the config or overridden on the command-line), a stable bump kind will temporarily override this setting to `false` when querying the latest historical tag. This guarantees stable releases are always calculated based on the latest stable parent release rather than intermediate prereleases. Prerelease tags are only evaluated when the bump kind is explicitly `prerelease` or `final`.

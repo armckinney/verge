@@ -2,6 +2,7 @@ package domain_test
 
 import (
 	"os"
+	"os/exec"
 	"path/filepath"
 	"testing"
 
@@ -112,6 +113,106 @@ func TestDomainBump(t *testing.T) {
 		rendered := parser.Render(bumped)
 		if rendered != "1.2.4dev1" {
 			t.Errorf("expected 1.2.4dev1, got %s", rendered)
+		}
+	})
+}
+
+func setupTestGitRepo(t *testing.T, tags []string) string {
+	t.Helper()
+	dir, err := os.MkdirTemp("", "verge-domain-bump-test-*")
+	if err != nil {
+		t.Fatalf("failed to create temp dir: %v", err)
+	}
+
+	// Helper to run command in temp dir
+	runCmd := func(name string, args ...string) {
+		cmd := exec.Command(name, args...)
+		cmd.Dir = dir
+		if err := cmd.Run(); err != nil {
+			t.Fatalf("command failed: %s %v: %v", name, args, err)
+		}
+	}
+
+	runCmd("git", "init")
+	runCmd("git", "config", "user.name", "Test User")
+	runCmd("git", "config", "user.email", "test@example.com")
+
+	filePath := filepath.Join(dir, "file.txt")
+	if err := os.WriteFile(filePath, []byte("hello"), 0644); err != nil {
+		t.Fatalf("failed to write file: %v", err)
+	}
+	runCmd("git", "add", "file.txt")
+	runCmd("git", "commit", "-m", "initial commit")
+
+	for _, tag := range tags {
+		runCmd("git", "tag", tag)
+	}
+
+	return dir
+}
+
+func TestStableBumpIgnoresPrerelease(t *testing.T) {
+	tags := []string{"v1.2.3", "v1.2.4-dev.5"}
+	dir := setupTestGitRepo(t, tags)
+	defer os.RemoveAll(dir)
+
+	t.Run("nested provider config - include_prerelease true ignored on stable bump", func(t *testing.T) {
+		cfg := &config.Config{
+			VersionType: "vsemver",
+			Provider: config.ProviderRaw{
+				Type: "gittag",
+				Raw: map[string]interface{}{
+					"gittag": map[string]interface{}{
+						"repo_dir":           dir,
+						"include_prerelease": true,
+					},
+				},
+			},
+		}
+
+		opts := domain.BumpOptions{
+			BumpKind: "patch",
+		}
+
+		bumped, err := domain.Bump(cfg, opts)
+		if err != nil {
+			t.Fatalf("expected no error, got %v", err)
+		}
+
+		parser := types.Get("vsemver")
+		rendered := parser.Render(bumped)
+		// Expected: v1.2.3 is latest stable, bump patch -> v1.2.4 (NOT v1.2.5!)
+		if rendered != "v1.2.4" {
+			t.Errorf("expected v1.2.4, got %s", rendered)
+		}
+	})
+
+	t.Run("flat provider config - include_prerelease true ignored on stable bump", func(t *testing.T) {
+		cfg := &config.Config{
+			VersionType: "vsemver",
+			Provider: config.ProviderRaw{
+				Type: "gittag",
+				Raw: map[string]interface{}{
+					"repo_dir":           dir,
+					"include_prerelease": true,
+				},
+			},
+		}
+
+		opts := domain.BumpOptions{
+			BumpKind: "patch",
+		}
+
+		bumped, err := domain.Bump(cfg, opts)
+		if err != nil {
+			t.Fatalf("expected no error, got %v", err)
+		}
+
+		parser := types.Get("vsemver")
+		rendered := parser.Render(bumped)
+		// Expected: v1.2.3 is latest stable, bump patch -> v1.2.4 (NOT v1.2.5!)
+		if rendered != "v1.2.4" {
+			t.Errorf("expected v1.2.4, got %s", rendered)
 		}
 	})
 }

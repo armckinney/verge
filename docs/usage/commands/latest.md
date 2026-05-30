@@ -17,6 +17,7 @@ verge latest [flags]
 * **`-t, --type string`**: Overrides the `version_type` setting in `.verge.yaml` (`semver` | `vsemver` | `pep440`).
 * **`-p, --provider string`**: Overrides the active `provider.type` (`gittag` | `ghrelease` | `ghcr`).
 * **`-v, --version string`**: Applies a prefix filter when querying. This allows you to find the latest version within a specific major or minor release line (e.g., finding the latest `1.2` release).
+* **`--provider-config strings`**: Comma-separated `key=value` pairs to provide fine-grained inline overrides of provider settings (e.g., `--provider-config repo_dir="/tmp/project"`).
 
 ---
 
@@ -50,4 +51,11 @@ $ verge latest --format json
   "normalized": "2.4.1",
   "rendered": "v2.4.1"
 }
+```
+
+#### 5. Fine-grained Overrides
+Query the latest stable tags by overriding `include_prerelease` on the fly:
+```bash
+$ verge latest --provider-config include_prerelease=false,repo_dir="/tmp/project"
+v1.2.3
 ```

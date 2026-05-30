@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strings"
 )
 
 type OutputFormat string
@@ -30,15 +31,32 @@ func NewOutput(format OutputFormat) *Output {
 // Print outputs data strictly based on spec 009.
 func (o *Output) Print(data map[string]interface{}) error {
 	if o.Field != "" {
-		val, ok := data[o.Field]
-		if !ok {
+		parts := strings.Split(o.Field, ".")
+		var current interface{} = data
+		var found = true
+		for _, part := range parts {
+			m, ok := current.(map[string]interface{})
+			if !ok {
+				found = false
+				break
+			}
+			val, ok := m[part]
+			if !ok {
+				found = false
+				break
+			}
+			current = val
+		}
+
+		if !found {
 			return fmt.Errorf("field %q not found in output", o.Field)
 		}
+
 		if o.Format == FormatJSON {
 			enc := json.NewEncoder(o.Writer)
-			return enc.Encode(val)
+			return enc.Encode(current)
 		}
-		fmt.Fprintln(o.Writer, val)
+		fmt.Fprintln(o.Writer, current)
 		return nil
 	}
 

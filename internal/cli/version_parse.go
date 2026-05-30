@@ -1,6 +1,9 @@
 package cli
 
 import (
+	"fmt"
+	"strings"
+
 	"example.com/verge/internal/config"
 	"example.com/verge/internal/types"
 	"example.com/verge/internal/version"
@@ -75,6 +78,51 @@ func versionParseCmd() *cobra.Command {
 			parser := types.Get(chosenType)
 			rendered := parser.Render(v)
 
+			hasV := strings.HasPrefix(strings.ToLower(v.Original), "v") || v.VersionType == "vsemver"
+			prefix := ""
+			if hasV {
+				prefix = "v"
+			}
+
+			// prerelease prefix calculation
+			var stageStr string
+			if v.IsPrerelease() {
+				stageStr = v.Stage.String()
+			} else {
+				stageStr = cfg.Default.PrereleaseStage
+			}
+
+			// Normalize stageStr
+			if v.VersionType == "semver" || v.VersionType == "vsemver" {
+				switch stageStr {
+				case "a", "alpha":
+					stageStr = "alpha"
+				case "b", "beta":
+					stageStr = "beta"
+				}
+			} else if v.VersionType == "pep440" {
+				switch stageStr {
+				case "alpha":
+					stageStr = "a"
+				case "beta":
+					stageStr = "b"
+				}
+			}
+
+			var prereleaseTag string
+			if v.VersionType == "pep440" {
+				prereleaseTag = fmt.Sprintf("%s%d.%d.%d%s", prefix, v.Major, v.Minor, v.Patch, stageStr)
+			} else {
+				prereleaseTag = fmt.Sprintf("%s%d.%d.%d-%s", prefix, v.Major, v.Minor, v.Patch, stageStr)
+			}
+
+			floating := map[string]interface{}{
+				"major":      fmt.Sprintf("%s%d", prefix, v.Major),
+				"minor":      fmt.Sprintf("%s%d.%d", prefix, v.Major, v.Minor),
+				"core":       fmt.Sprintf("%s%d.%d.%d", prefix, v.Major, v.Minor, v.Patch),
+				"prerelease": prereleaseTag,
+			}
+
 			defaultFormat := OutputFormat(globalFlags.format)
 			if !cmd.Flags().Changed("format") && !globalFlags.json {
 				defaultFormat = FormatJSON
@@ -95,6 +143,7 @@ func versionParseCmd() *cobra.Command {
 				"version":       v.Original,
 				"normalized":    v.String(),
 				"rendered":      rendered,
+				"floating":      floating,
 			}
 
 			return out.Print(data)

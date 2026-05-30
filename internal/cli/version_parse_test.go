@@ -39,6 +39,31 @@ func TestVersionParseCmd(t *testing.T) {
 			wantOut: "1\n",
 		},
 		{
+			name:    "VSemver with nested floating.major",
+			args:    []string{"v1.2.3-dev.4", "--field", "floating.major", "--format", "text"},
+			wantOut: "v1\n",
+		},
+		{
+			name:    "VSemver with nested floating.minor",
+			args:    []string{"v1.2.3-dev.4", "--field", "floating.minor", "--format", "text"},
+			wantOut: "v1.2\n",
+		},
+		{
+			name:    "VSemver with nested floating.prerelease",
+			args:    []string{"v1.2.3-dev.4", "--field", "floating.prerelease", "--format", "text"},
+			wantOut: "v1.2.3-dev\n",
+		},
+		{
+			name:    "Stable vsemver with nested floating.prerelease",
+			args:    []string{"v1.2.3", "--field", "floating.prerelease", "--format", "text"},
+			wantOut: "v1.2.3-dev\n",
+		},
+		{
+			name:    "Stable pep440 with nested floating.prerelease",
+			args:    []string{"1.2.3", "--type", "pep440", "--field", "floating.prerelease", "--format", "text"},
+			wantOut: "1.2.3dev\n",
+		},
+		{
 			name:    "PEP440 with json format",
 			args:    []string{"1.2.3a5", "--format", "json"},
 			wantOut: `"major": 1`,

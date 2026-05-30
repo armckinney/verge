@@ -42,11 +42,17 @@ When requested with `--format json` or plucked via `--field`, the following fiel
 ## Examples
 
 #### 1. Parse Version with Auto-Detection (Default)
-By default, the parse command outputs fully structured JSON:
+By default, the parse command outputs fully structured JSON, including the `floating` tags candidate block:
 ```bash
 $ verge parse 1.2.3dev4
 {
   "core": "1.2.3",
+  "floating": {
+    "core": "1.2.3",
+    "major": "1",
+    "minor": "1.2",
+    "prerelease": "1.2.3dev"
+  },
   "is_prerelease": true,
   "major": 1,
   "minor": 2,
@@ -75,7 +81,20 @@ $ verge parse 1.2.3dev4 --field major
 1
 ```
 
-#### 4. Pluck Core and Pre-release Fields
+#### 4. Query Floating Tags using Nested Dot-Notation Fields
+You can query nested paths directly via the global `--field` flag (pass `--format text` to omit outer JSON quotes in scripts):
+```bash
+$ verge parse v1.2.3-dev.4 --field floating.major --format text
+v1
+
+$ verge parse v1.2.3-dev.4 --field floating.minor --format text
+v1.2
+
+$ verge parse v1.2.3-dev.4 --field floating.prerelease --format text
+v1.2.3-dev
+```
+
+#### 5. Pluck Core and Pre-release Fields
 ```bash
 $ verge parse 1.2.3dev4 --field core
 1.2.3
@@ -84,9 +103,9 @@ $ verge parse 1.2.3dev4 --field stage
 dev
 ```
 
-#### 5. Integration with jq
+#### 6. Integration with jq
 Plucking with `jq`:
 ```bash
-$ verge parse 1.2.3dev4 | jq -r '.is_prerelease'
-true
+$ verge parse 1.2.3dev4 | jq -r '.floating.prerelease'
+1.2.3dev
 ```

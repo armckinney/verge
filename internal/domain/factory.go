@@ -17,7 +17,11 @@ import (
 // NewFromConfig builds a VersionProvider given the raw provider configuration.
 func NewFromConfig(cfg *config.Config) (providers.VersionProvider, error) {
 	// Re-marshal and unmarshal to parse strictly into the target structs
-	data, err := yaml.Marshal(cfg.Provider.Raw)
+	var rawData interface{} = cfg.Provider.Raw
+	if nested, ok := cfg.Provider.Raw[cfg.Provider.Type]; ok {
+		rawData = nested
+	}
+	data, err := yaml.Marshal(rawData)
 	if err != nil {
 		return nil, fmt.Errorf("failed to marshal provider config: %w", err)
 	}
